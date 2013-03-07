@@ -4,7 +4,9 @@ With msd prefix you have parallel Most significant digit radix sort
 
 With lsd prefix you have Least significant digit radix sort
 
-The Int and Word types are not supported as [its binary representation may vary](http://www.haskell.org/ghc/docs/7.2.2/html/libraries/ghc-prim-0.2.0.0/GHC-Prim.html#g:1).
+The Float and Double types have ordered representations within each sign subset.
+
+The Int and Word types are not supported as [its binary representation may vary](http://www.haskell.org/ghc/docs/7.2.2/html/libraries/ghc-prim-0.2.0.0/GHC-Prim.html#g:1). You can use explicit length IntN and WordN types.
 
 The flag --enable-tests builds the QuickCheck test-suite at (test/test.hs)
 

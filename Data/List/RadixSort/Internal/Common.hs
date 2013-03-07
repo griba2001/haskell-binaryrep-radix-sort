@@ -10,7 +10,7 @@ import Data.Array.Unsafe (castSTUArray)
 import GHC.ST (runST, ST)
 
 import Data.Int (Int8, Int16, Int32, Int64)
-import Data.Word (Word, Word8, Word16, Word32, Word64)
+import Data.Word (Word8, Word16, Word32, Word64)
 import Data.Bits
 
 -- import Control.Exception (assert)

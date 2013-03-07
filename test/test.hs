@@ -99,10 +99,6 @@ main = do
         deepCheck ((\s -> checkOrdered $ msdSortNats s) :: [Word64] -> Bool)
 
         
-        putStrLn "sorting by msd first [Word]"
-        deepCheck ((\s -> checkOrdered $ msdSortNats s) :: [Word] -> Bool)
-
-        
         putStrLn "\n"
         
         putStrLn "sorting by lsd first [Float]"
@@ -149,8 +145,5 @@ main = do
         putStrLn "sorting by lsd first [Word64]"
         deepCheck ((\s -> checkOrdered $ lsdSortNats s) :: [Word64] -> Bool)
 
-        
-        putStrLn "sorting by lsd first [Word]"
-        deepCheck ((\s -> checkOrdered $ lsdSortNats s) :: [Word] -> Bool)
         
         exitSuccess

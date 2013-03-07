@@ -52,12 +52,10 @@ library
                        Data.List.RadixSort.HasIndexInt32
                        Data.List.RadixSort.HasIndexInt16
                        Data.List.RadixSort.HasIndexInt8
-                       Data.List.RadixSort.HasIndexInt
                        Data.List.RadixSort.HasIndexWord64
                        Data.List.RadixSort.HasIndexWord32
                        Data.List.RadixSort.HasIndexWord16
                        Data.List.RadixSort.HasIndexWord8
-                       Data.List.RadixSort.HasIndexWord
 
                        Data.List.RadixSort.Internal.Common
                        Data.List.RadixSort.Internal.LSD
