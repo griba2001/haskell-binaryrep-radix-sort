@@ -5,11 +5,7 @@ module Data.List.RadixSort.Internal.Counters (
 
 -- import Data.Bits
 import Data.List.RadixSort.Internal.Common
-import Data.List.RadixSort.Internal.DigitVal (wordGetAllDigitVal)
-
-import Data.Word (Word8, Word16, Word32, Word64)
--- import Control.Exception (assert)
-import Text.Printf (printf)
+import Data.List.RadixSort.Internal.DigitVal (getAllDigitVals)
 
 -- import qualified Data.List as L
 import "vector" Data.Vector (Vector)
@@ -65,10 +61,5 @@ updateCounters sortInfo vec cnt (x:xs) = do
         updateCounters sortInfo vec (cnt+1) xs
   where
         topDigit = sortInfo .$ siTopDigit
-        allDigitVals = case sizeOf x of
-                        64 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word64)
-                        32 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word32)
-                        16 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word16)
-                        8 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word8)
-                        other -> error $ printf "size %d not supported!" other
+        allDigitVals = getAllDigitVals sortInfo x
   

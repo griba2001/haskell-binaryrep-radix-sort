@@ -1,8 +1,9 @@
 {-# LANGUAGE PackageImports #-}
 module Data.List.RadixSort.Internal.DigitVal (
-  wordGetAllDigitVal,
-  wordGetDigitVal,
-  getDigitVal          
+  -- wordGetAllDigitVal,
+  -- wordGetDigitVal,
+  getDigitVal,
+  getAllDigitVals        
 ) where
 
 import Data.Bits
@@ -27,6 +28,18 @@ getDigitVal sortInfo x digit bitsToShift =
                         8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) (digit, bitsToShift)
                         other -> error $ printf "size %d not supported!" other
 
+------------------------------------------
+
+getAllDigitVals :: (RadixRep a) => SortInfo -> a -> [Int]
+getAllDigitVals sortInfo x =
+        
+        case sizeOf x of
+                        64 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word64)
+                        32 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word32)
+                        16 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word16)
+                        8 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word8)
+                        other -> error $ printf "size %d not supported!" other
+                        
 ------------------------------------------
 
 wordGetAllDigitVal :: (Bits a, Integral a) => SortInfo -> a -> [Int]
