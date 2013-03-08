@@ -1,7 +1,8 @@
 {-# LANGUAGE PackageImports #-}
 module Data.List.RadixSort.Internal.DigitVal (
   wordGetAllDigitVal,
-  wordGetDigitVal        
+  wordGetDigitVal,
+  getDigitVal          
 ) where
 
 import Data.Bits
@@ -10,6 +11,21 @@ import Data.List.RadixSort.Internal.Common
 import Control.Exception (assert)
 
 import qualified Data.List as L
+import Data.Word (Word8, Word16, Word32, Word64)
+import Text.Printf (printf)
+
+
+------------------------------------------
+
+getDigitVal :: (RadixRep a) => SortInfo -> a -> Int -> Int -> Int
+getDigitVal sortInfo x digit bitsToShift =
+
+        case sizeOf x of
+                        64 -> wordGetDigitVal sortInfo (toWordRep x :: Word64) (digit, bitsToShift)
+                        32 -> wordGetDigitVal sortInfo (toWordRep x :: Word32) (digit, bitsToShift)
+                        16 -> wordGetDigitVal sortInfo (toWordRep x :: Word16) (digit, bitsToShift)
+                        8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) (digit, bitsToShift)
+                        other -> error $ printf "size %d not supported!" other
 
 ------------------------------------------
 

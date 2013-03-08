@@ -7,7 +7,7 @@ module Data.List.RadixSort.Internal.Util (
 ) where
 
 import Data.List.RadixSort.Internal.Common
-import Data.List.RadixSort.Internal.DigitVal (wordGetDigitVal)
+import Data.List.RadixSort.Internal.DigitVal (getDigitVal)
 
 import Data.Word (Word8, Word16, Word32, Word64)
 -- import Control.Exception (assert)
@@ -59,12 +59,8 @@ partListByDigit sortInfo' digit' vec' list = do
         partListByDigitR bitsToShift sortInfo digit vec xs
         return ()
       where
-        digitVal = case sizeOf x of
-                        64 -> wordGetDigitVal sortInfo (toWordRep x :: Word64) (digit, bitsToShift)
-                        32 -> wordGetDigitVal sortInfo (toWordRep x :: Word32) (digit, bitsToShift)
-                        16 -> wordGetDigitVal sortInfo (toWordRep x :: Word16) (digit, bitsToShift)
-                        8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) (digit, bitsToShift)
-                        other -> error $ printf "size %d not supported!" other
+        digitVal = getDigitVal sortInfo x digit bitsToShift
+        
         
 ------------------------------------------
 

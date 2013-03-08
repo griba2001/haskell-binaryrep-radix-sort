@@ -4,6 +4,7 @@ module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
 import Data.List.RadixSort.Internal.Common
 import Data.List.RadixSort.Internal.Util
+import Data.List.RadixSort.Internal.DigitVal (getDigitVal)
 import Data.List.RadixSort.Internal.Counters (checkDigitsConstancy)
 
 import Data.Bits
@@ -30,7 +31,14 @@ lsdRadixSort list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST 
         
         vecIni <- V.thaw emptyVecOfSeqs
         -- partition by digit 0
-        partListByDigit sortInfo 0 vecIni list
+        let digit' = 0
+        if not $ digitsConstancy!!digit'
+          then partListByDigit sortInfo digit' vecIni list
+          else do -- constant data on digit 0, write list to digitVal pos.
+                 let bitsToShift = 0
+                     digitVal = getDigitVal sortInfo (L.head list) digit' bitsToShift
+                 VM.write vecIni digitVal $ S.fromList list    
+        
         refVecFrom <- newSTRef vecIni
 
         M.when (topDigit > 0) $
@@ -66,3 +74,5 @@ lsdRadixSort list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST 
     topDigitVal = bit bitsPerDigit -1
     topDigit = (sizeOf $ L.head list) `div` bitsPerDigit - 1
     bitsPerDigit = calcDigitSize list
+
+------------------------------------------
