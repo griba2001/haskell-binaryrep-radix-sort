@@ -3,16 +3,17 @@ module Data.List.RadixSort.Internal.Util (
   partBySign,
   calcDigitSize,
   partListByDigit,
-  collectVecToDList
+  collectVecToDList,
 ) where
 
-import Data.Bits
 import Data.List.RadixSort.Internal.Common
+import Data.List.RadixSort.Internal.DigitVal (wordGetDigitVal)
 
-import Data.Word (Word, Word8, Word16, Word32, Word64)
-import Control.Exception (assert)
+import Data.Word (Word8, Word16, Word32, Word64)
+-- import Control.Exception (assert)
 import Text.Printf (printf)
 
+import Data.Bits
 -- import qualified Data.List as L
 import Data.Sequence (Seq)
 import qualified Data.Sequence as S
@@ -59,29 +60,11 @@ partListByDigit sortInfo' digit' vec' list = do
         return ()
       where
         digitVal = case sizeOf x of
-                        64 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word64)
-                        32 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word32)
-                        16 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word16)
-                        8 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word8)
+                        64 -> wordGetDigitVal sortInfo (toWordRep x :: Word64) (digit, bitsToShift)
+                        32 -> wordGetDigitVal sortInfo (toWordRep x :: Word32) (digit, bitsToShift)
+                        16 -> wordGetDigitVal sortInfo (toWordRep x :: Word16) (digit, bitsToShift)
+                        8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) (digit, bitsToShift)
                         other -> error $ printf "size %d not supported!" other
-        
-------------------------------------------
-
-wordGetDigitVal :: (Bits a, Integral a) => Int -> SortInfo -> Int -> a -> Int
-wordGetDigitVal bitsToShift sortInfo digit bits =
-      assert (digit >= 0 && digit <= topDigit) $ fromIntegral digitVal
-    where
-      digitVal = shiftR (bits .&. mask) bitsToShift
-      
-      mask = if digit == topDigit && signed == Signed
-              then shiftL (fromIntegral digitMaskSignExcl) bitsToShift
-              else shiftL (fromIntegral digitMask) bitsToShift
-              
-      digitMask = bit bitsPerDigit -1 :: Word
-      digitMaskSignExcl = (bit (bitsPerDigit-1) -1) :: Word   -- sign excluded
-      bitsPerDigit = sortInfo .$ siDigitSize
-      topDigit = sortInfo .$ siTopDigit
-      signed = sortInfo .$ siSigned
         
 ------------------------------------------
 

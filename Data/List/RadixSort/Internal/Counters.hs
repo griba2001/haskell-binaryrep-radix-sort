@@ -3,14 +3,15 @@ module Data.List.RadixSort.Internal.Counters (
   checkDigitsConstancy,
 ) where
 
-import Data.Bits
+-- import Data.Bits
 import Data.List.RadixSort.Internal.Common
+import Data.List.RadixSort.Internal.DigitVal (wordGetAllDigitVal)
 
-import Data.Word (Word, Word8, Word16, Word32, Word64)
-import Control.Exception (assert)
+import Data.Word (Word8, Word16, Word32, Word64)
+-- import Control.Exception (assert)
 import Text.Printf (printf)
 
-import qualified Data.List as L
+-- import qualified Data.List as L
 import "vector" Data.Vector (Vector)
 import qualified "vector" Data.Vector as V
 import "vector" Data.Vector.Mutable (MVector)
@@ -70,35 +71,4 @@ updateCounters sortInfo vec cnt (x:xs) = do
                         16 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word16)
                         8 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word8)
                         other -> error $ printf "size %d not supported!" other
-
------------------------------
-                        
-wordGetAllDigitVal :: (Bits a, Integral a) => SortInfo -> a -> [Int]
-wordGetAllDigitVal sortInfo x =
-        L.zip digitList bitsToShiftList
-            .$ map (wordGetDigitVal sortInfo x)
-  where
-    digitList = [0..topDigit] 
-    bitsToShiftList = [0,bitsPerDigit..(size-bitsPerDigit)] 
-    topDigit = sortInfo .$ siTopDigit
-    size = sortInfo .$ siSize
-    bitsPerDigit = sortInfo .$ siDigitSize
-
------------------------------    
-  
-wordGetDigitVal :: (Bits a, Integral a) => SortInfo -> a -> (Int, Int) ->  Int
-wordGetDigitVal sortInfo bits (digit, bitsToShift) =
-      assert (digit >= 0 && digit <= topDigit) $ fromIntegral digitVal
-    where
-      digitVal = shiftR (bits .&. mask) bitsToShift
-
-      mask = if digit == topDigit && signed == Signed
-              then shiftL (fromIntegral digitMaskSignExcl) bitsToShift
-              else shiftL (fromIntegral digitMask) bitsToShift
-
-      digitMask = bit bitsPerDigit -1 :: Word
-      digitMaskSignExcl = (bit (bitsPerDigit-1) -1) :: Word   -- sign excluded
-      bitsPerDigit = sortInfo .$ siDigitSize
-      topDigit = sortInfo .$ siTopDigit
-      signed = sortInfo .$ siSigned
   

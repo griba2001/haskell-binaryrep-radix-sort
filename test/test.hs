@@ -1,5 +1,7 @@
 
-import Data.List.RadixSort.Base (msdSortInts, msdSortFloats, msdSortNats, lsdSortInts, lsdSortFloats, lsdSortNats, RadixRep)
+import Data.List.RadixSort.Base (msdSortInts, msdSortFloats, msdSortNats,
+                                 lsdSortInts, lsdSortFloats, lsdSortNats,
+                                 RadixRep)
 import Data.List.RadixSort.HasIndexFloat (HasIndexFloat(..))
 import Data.List as L
 import Data.Int
@@ -48,7 +50,7 @@ isQCSuccess _ = False
 
 deepCheck :: Testable prop => prop -> IO ()
 deepCheck p = do
-        res <- quickCheckWithResult (stdArgs { maxSuccess = 100, maxSize = 50}) p
+        res <- quickCheckWithResult (stdArgs { maxSuccess = 100, maxSize = 200}) p
         when (not $ isQCSuccess res) $ exitWith (ExitFailure 1)
         return ()
 
