@@ -10,7 +10,7 @@ name:                binaryrep-radix-sort
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.4.0.4
+version:             1.4.0.5
 
 -- A short (one-line) description of the package.
 synopsis:            RadixSort of floats, ints and unsigned, based on their binary representation
@@ -46,6 +46,10 @@ Flag Debug
   Description: Enable debug support
   Default:     False
 
+Flag Llvm
+  Description: Enable llvm compilation
+  Default:     False
+
 library
   Default-Language:    Haskell2010
   Exposed-modules:     Data.List.RadixSort.Base
@@ -67,7 +71,12 @@ library
                        Data.List.RadixSort.Internal.DigitVal
                        Data.List.RadixSort.Internal.Counters
 
-  Ghc-Options:         -Wall -O2 -fno-warn-orphans
+  Ghc-Options:         -Wall -fno-warn-orphans
+
+  if flag(llvm) && !os(windows)
+    Ghc-Options:       -fllvm -O3
+  else
+    Ghc-Options:       -O2
 
   if flag(debug)
     cpp-Options: -DDEBUG
@@ -87,7 +96,7 @@ Test-Suite test-binaryrep-radix-sort
   Type:                 exitcode-stdio-1.0
   Default-Language:     Haskell2010
   Hs-Source-Dirs:       test
-  Ghc-Options:          -Wall 
+  Ghc-Options:          -Wall -threaded
   Main-Is:              test.hs
   -- Test-module:          Test
   Build-Depends:        base

@@ -33,7 +33,8 @@ import Data.List.RadixSort.Internal.LSD (lsdRadixSort)
 import Data.List.RadixSort.Internal.Util (partBySign)
 
 import qualified Data.List as L
-import "parallel" Control.Parallel (par, pseq)
+-- import "parallel" Control.Parallel (par, pseq)
+import "parallel" Control.Parallel.Strategies (using, rpar, rseq)
 
 ------------------------------------------
         
@@ -49,7 +50,7 @@ import "parallel" Control.Parallel (par, pseq)
 msdSortFloats :: (RadixRep a) => [a] -> [a]
 msdSortFloats [] = []
 msdSortFloats [x] = [x]
-msdSortFloats list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sortedPoss))
+msdSortFloats list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, negs) = partBySign [] [] list
     sortedPoss = msdRadixSort poss
@@ -60,7 +61,7 @@ msdSortFloats list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sorted
 lsdSortFloats :: (RadixRep a) => [a] -> [a]
 lsdSortFloats [] = []
 lsdSortFloats [x] = [x]
-lsdSortFloats list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sortedPoss))
+lsdSortFloats list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, negs) = partBySign [] [] list
     sortedPoss = lsdRadixSort poss
@@ -75,7 +76,7 @@ lsdSortFloats list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sorted
 msdSortInts :: (RadixRep a) => [a] -> [a]
 msdSortInts [] = []
 msdSortInts [x] = [x]
-msdSortInts list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sortedPoss))
+msdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, negs) = partBySign [] [] list
     sortedPoss = msdRadixSort poss
@@ -84,7 +85,7 @@ msdSortInts list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sortedPo
 lsdSortInts :: (RadixRep a) => [a] -> [a]
 lsdSortInts [] = []
 lsdSortInts [x] = [x]
-lsdSortInts list = sortedNegs `par` (sortedPoss `pseq` (sortedNegs L.++ sortedPoss))
+lsdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, negs) = partBySign [] [] list
     sortedPoss = lsdRadixSort poss
