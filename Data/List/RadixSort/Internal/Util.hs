@@ -13,7 +13,7 @@ import Data.Word (Word, Word8, Word16, Word32, Word64)
 import Control.Exception (assert)
 import Text.Printf (printf)
 
-import qualified Data.List as L
+-- import qualified Data.List as L
 import Data.Sequence (Seq)
 import qualified Data.Sequence as S
 import qualified Data.Foldable as F
@@ -25,8 +25,6 @@ import "vector" Data.Vector.Mutable (MVector)
 import qualified "vector" Data.Vector.Mutable as VM
 
 import GHC.ST (ST)
-
-------------------------------------------
 
 ------------------------------------------
 
@@ -61,18 +59,16 @@ partListByDigit sortInfo' digit' vec' list = do
         return ()
       where
         digitVal = case sizeOf x of
-                        64 -> wordGetDigitVal bitsToShift sortInfo signedQ digit $ (toWordRep x :: Word64)
-                        32 -> wordGetDigitVal bitsToShift sortInfo signedQ digit $ (toWordRep x :: Word32)
-                        16 -> wordGetDigitVal bitsToShift sortInfo signedQ digit $ (toWordRep x :: Word16)
-                        8 -> wordGetDigitVal bitsToShift sortInfo signedQ digit $ (toWordRep x :: Word8)
+                        64 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word64)
+                        32 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word32)
+                        16 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word16)
+                        8 -> wordGetDigitVal bitsToShift sortInfo digit $ (toWordRep x :: Word8)
                         other -> error $ printf "size %d not supported!" other
-
-        signedQ = signedQual x
-
+        
 ------------------------------------------
 
-wordGetDigitVal :: (Bits a, Integral a) => Int -> SortInfo -> SignedQual -> Int -> a -> Int
-wordGetDigitVal bitsToShift sortInfo signed digit bits =
+wordGetDigitVal :: (Bits a, Integral a) => Int -> SortInfo -> Int -> a -> Int
+wordGetDigitVal bitsToShift sortInfo digit bits =
       assert (digit >= 0 && digit <= topDigit) $ fromIntegral digitVal
     where
       digitVal = shiftR (bits .&. mask) bitsToShift
@@ -85,6 +81,7 @@ wordGetDigitVal bitsToShift sortInfo signed digit bits =
       digitMaskSignExcl = (bit (bitsPerDigit-1) -1) :: Word   -- sign excluded
       bitsPerDigit = sortInfo .$ siDigitSize
       topDigit = sortInfo .$ siTopDigit
+      signed = sortInfo .$ siSigned
         
 ------------------------------------------
 

@@ -37,7 +37,7 @@ cast x = newArray (0 :: Int, 0) x >>= castSTUArray >>= flip readArray 0
 
 data SignedQual = Signed | Unsigned deriving (Eq, Show)
 
-data SortInfo = SortInfo {siDigitSize::Int, siTopDigit::Int, siTopDigitVal::Int}
+data SortInfo = SortInfo {siDigitSize::Int, siTopDigit::Int, siTopDigitVal::Int, siSigned::SignedQual, siSize::Int}
 
 -- | class to instanciate for a type to be used in radix sorts
 class RadixRep t where

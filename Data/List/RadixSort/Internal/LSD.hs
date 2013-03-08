@@ -4,6 +4,7 @@ module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
 import Data.List.RadixSort.Internal.Common
 import Data.List.RadixSort.Internal.Util
+import Data.List.RadixSort.Internal.Counters (checkDigitsConstancy)
 
 import Data.Bits
 import qualified Data.List as L
@@ -24,6 +25,9 @@ lsdRadixSort :: (RadixRep a) => [a] -> [a]
 lsdRadixSort [] = []
 lsdRadixSort [x] = [x]
 lsdRadixSort list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST $ do
+        
+        digitsConstancy <- checkDigitsConstancy sortInfo list
+        
         vecIni <- V.thaw emptyVecOfSeqs
         -- partition by digit 0
         partListByDigit sortInfo 0 vecIni list
@@ -31,7 +35,8 @@ lsdRadixSort list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST 
 
         M.when (topDigit > 0) $
            M.forM_ [1..topDigit] $ \digit -> do
-                -- sort by digit
+             M.when ( not $ digitsConstancy!!digit)
+                (do  -- sort by digit
                 vecFrom <- readSTRef refVecFrom
                 vecTo <- V.thaw emptyVecOfSeqs
 
@@ -42,6 +47,7 @@ lsdRadixSort list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST 
                     partListByDigit sortInfo digit vecTo (F.toList s)
 
                 writeSTRef refVecFrom vecTo
+                )
 
         lastDigitSortedMVec <- readSTRef refVecFrom
         lastDigitSortedVec <- V.freeze lastDigitSortedMVec
@@ -53,7 +59,9 @@ lsdRadixSort list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST 
     
     sortInfo = SortInfo {siDigitSize = bitsPerDigit,
                          siTopDigit = topDigit,
-                         siTopDigitVal = topDigitVal
+                         siTopDigitVal = topDigitVal,
+                         siSigned = signedQual (L.head list),
+                         siSize = sizeOf (L.head list)
                          }
     topDigitVal = bit bitsPerDigit -1
     topDigit = (sizeOf $ L.head list) `div` bitsPerDigit - 1

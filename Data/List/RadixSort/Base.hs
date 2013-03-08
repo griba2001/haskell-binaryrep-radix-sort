@@ -7,7 +7,7 @@
 
   Here we partition numbers by sign and sort both lists in parallel (you should link with -threaded)
 
-  The digit size is set to 8 bits for lists > 512 elements, else 4, in order to save space when sorting small lists
+  The digit size is set to 8 bits.
 
   digit value queues are appended as difference lists (DList from package dlist, O(1) on append)
 

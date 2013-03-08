@@ -10,7 +10,7 @@ name:                binaryrep-radix-sort
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.4.0.0
+version:             1.4.0.1
 
 -- A short (one-line) description of the package.
 synopsis:            RadixSort of floats, ints and unsigned, based on their binary representation
@@ -42,6 +42,9 @@ build-type:          Simple
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >= 1.10
 
+Flag Debug
+  Description: Enable debug support
+  Default:     False
 
 library
   Default-Language:    Haskell2010
@@ -61,8 +64,16 @@ library
                        Data.List.RadixSort.Internal.LSD
                        Data.List.RadixSort.Internal.MSD
                        Data.List.RadixSort.Internal.Util
+                       Data.List.RadixSort.Internal.Counters
 
   Ghc-Options:         -Wall -O2 -fno-warn-orphans
+
+  if flag(debug)
+    cpp-Options: -DDEBUG
+    if !os(windows)
+      CC-Options: "-DDEBUG"
+    else
+      CC-Options: "-DNDEBUG"
 
   Build-depends:       base >= 4.3
                      , array >= 0.4
