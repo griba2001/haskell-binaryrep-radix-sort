@@ -39,12 +39,17 @@ sortByDigit sortInfo digitsConstancy digit list = runST $ do
            else do
                 let dlists = vec .$ V.toList
                                  .$ map F.toList
-                                 .$ parMap rseq (sortByDigit sortInfo digitsConstancy nextDigit)
+                                 .$ map (recSort nextDigit)
                                  
                 return $ D.concat dlists                      
   where
     emptyVecOfSeqs = V.replicate (topDigitVal+1) S.empty
     topDigitVal = sortInfo .$ siTopDigitVal
+    
+    recSort _nextDigit [] = D.empty
+    recSort _nextDigit [x] = D.singleton x
+    recSort nextDigit list' = (sortByDigit sortInfo digitsConstancy nextDigit list') `using` rpar  -- spark it in parallel
+    
 
 ------------------------------------------
 nextSortableDigit :: [Bool] -> Int -> Int
