@@ -25,12 +25,11 @@ or
 Sorting floats (Float, Double) or records with a floating-point index:
 
 ```haskell
-    {-# LANGUAGE PackageImports #-}
-
     import Data.List.RadixSort.Base (lsdSortFloats)
     import Data.List.RadixSort.HasIndexFloat (HasIndexFloat(..))
+
     import Data.List as L
-    import "random" System.Random
+    import System.Random
     import Control.Monad
     import Data.Ord
 
@@ -58,12 +57,11 @@ Sorting floats (Float, Double) or records with a floating-point index:
 Sorting integers (type IntN) or records with an IntN index:
 
 ```haskell
-    {-# LANGUAGE PackageImports #-}
-
     import Data.List.RadixSort.Base (lsdSortInts)
     import Data.List.RadixSort.HasIndexInt32 (HasIndexInt32(..))
+
     import Data.List as L
-    import "random" System.Random
+    import System.Random
     import Control.Monad
     import Data.Int
     import Data.Ord
@@ -93,12 +91,11 @@ Sorting integers (type IntN) or records with an IntN index:
 Sorting naturals (type WordN) or records with a WordN index:
 
 ```haskell
-    {-# LANGUAGE PackageImports #-}
-
     import Data.List.RadixSort.Base (lsdSortNats)
     import Data.List.RadixSort.HasIndexWord32 (HasIndexWord32(..))
+
     import Data.List as L
-    import "random" System.Random
+    import System.Random
     import Control.Monad
     import Data.Word
     import Data.Ord
