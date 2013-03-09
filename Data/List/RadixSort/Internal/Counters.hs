@@ -49,7 +49,7 @@ updateCounters _sortInfo _vecPos cntPos accumPos _vecNeg cntNeg accumNeg []  = r
 updateCounters sortInfo vecPos cntPos accumPos vecNeg cntNeg accumNeg (x:xs) = do
             
         M.forM_ [0..topDigit] $ \digit -> do
-            let mvecCounters = if signedQual x == Signed && isNeg x
+            let mvecCounters = if isNeg x
                                    then vecNeg V.! digit
                                    else vecPos V.! digit
                                    
@@ -57,7 +57,7 @@ updateCounters sortInfo vecPos cntPos accumPos vecNeg cntNeg accumNeg (x:xs) = d
             dvCnt <- VM.read mvecCounters digitVal
             VM.write mvecCounters digitVal (dvCnt +1)
 
-        if signedQual x == Signed && isNeg x
+        if isNeg x
            then updateCounters sortInfo vecPos cntPos accumPos vecNeg (cntNeg+1) (x:accumNeg) xs
            else updateCounters sortInfo vecPos (cntPos+1) (x:accumPos) vecNeg cntNeg accumNeg xs
   where

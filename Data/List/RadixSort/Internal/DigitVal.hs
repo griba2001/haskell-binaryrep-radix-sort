@@ -15,7 +15,9 @@ import Data.Word (Word8, Word16, Word32, Word64)
 import Text.Printf (printf)
 
 isNeg ::  (RadixRep a) => a -> Bool
-isNeg y = let s = sizeOf y
+isNeg y = if signedQual y == Unsigned
+             then False
+             else let s = sizeOf y
                   in case s of
                         64 -> testBit (toWordRep y :: Word64) (s-1)
                         32 -> testBit (toWordRep y :: Word32) (s-1)
