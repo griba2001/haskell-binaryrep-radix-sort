@@ -1,17 +1,12 @@
 {-# LANGUAGE PackageImports #-}
 module Data.List.RadixSort.Internal.Util (
-  partBySign,
-  calcDigitSize,
+  getSortInfo,
   partListByDigit,
   collectVecToDList,
 ) where
 
 import Data.List.RadixSort.Internal.Common
 import Data.List.RadixSort.Internal.DigitVal (getDigitVal)
-
-import Data.Word (Word8, Word16, Word32, Word64)
--- import Control.Exception (assert)
-import Text.Printf (printf)
 
 import Data.Bits
 -- import qualified Data.List as L
@@ -26,24 +21,7 @@ import "vector" Data.Vector.Mutable (MVector)
 import qualified "vector" Data.Vector.Mutable as VM
 
 import GHC.ST (ST)
-
-------------------------------------------
-
--- partition by sign
-partBySign :: (RadixRep a) => [a] -> [a] -> [a] -> ([a], [a])
-partBySign poss negs [] = (poss, negs)
-partBySign poss negs (x:xs) = if isNeg x
-                               then partBySign poss (x:negs) xs
-                               else partBySign (x:poss) negs xs
-  where
-        isNeg y = let s = sizeOf y
-                  in case s of
-                        64 -> testBit (toWordRep y :: Word64) (s-1)
-                        32 -> testBit (toWordRep y :: Word32) (s-1)
-                        16 -> testBit (toWordRep y :: Word16) (s-1)
-                        8 ->  testBit (toWordRep y :: Word8) (s-1)
-                        other -> error $ printf "size %d not supported!" other
-                        
+                       
 ------------------------------------------
 
 partListByDigit :: (RadixRep a) => SortInfo -> Int -> MVector s (Seq a) -> [a] -> ST s ()
@@ -74,12 +52,16 @@ collectVecToDList vec n dl =
         dln = D.fromList $ F.toList $ vec V.! n
 
 ------------------------------------------
-
-calcDigitSize :: [a] -> Int
-calcDigitSize _list = 8
-  {-
-        let (_prefix, postfix) = L.splitAt 500 list
-        in if null postfix
-                then 4  -- use small vectors (save space)
-                else 8  -- use bigger vectors
-                -}
+                
+getSortInfo :: (RadixRep a) => a -> SortInfo
+getSortInfo x = SortInfo {siDigitSize = bitsPerDigit,
+                         siTopDigit = topDigit,
+                         siTopDigitVal = topDigitVal,
+                         siSigned = signedQual x,
+                         siSize = sizeOf x
+                         }
+  where                       
+    topDigitVal = bit bitsPerDigit -1
+    topDigit = (sizeOf x) `div` bitsPerDigit - 1
+    bitsPerDigit = 8
+                

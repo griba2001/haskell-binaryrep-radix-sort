@@ -1,9 +1,8 @@
 {-# LANGUAGE PackageImports #-}
 module Data.List.RadixSort.Internal.DigitVal (
-  -- wordGetAllDigitVal,
-  -- wordGetDigitVal,
   getDigitVal,
-  getAllDigitVals        
+  getAllDigitVals,
+  isNeg          
 ) where
 
 import Data.Bits
@@ -15,6 +14,14 @@ import qualified Data.List as L
 import Data.Word (Word8, Word16, Word32, Word64)
 import Text.Printf (printf)
 
+isNeg ::  (RadixRep a) => a -> Bool
+isNeg y = let s = sizeOf y
+                  in case s of
+                        64 -> testBit (toWordRep y :: Word64) (s-1)
+                        32 -> testBit (toWordRep y :: Word32) (s-1)
+                        16 -> testBit (toWordRep y :: Word16) (s-1)
+                        8 ->  testBit (toWordRep y :: Word8) (s-1)
+                        other -> error $ printf "size %d not supported!" other
 
 ------------------------------------------
 

@@ -30,14 +30,13 @@ module Data.List.RadixSort.Base (
 import Data.List.RadixSort.Internal.Common
 import Data.List.RadixSort.Internal.MSD (msdRadixSort)
 import Data.List.RadixSort.Internal.LSD (lsdRadixSort)
-import Data.List.RadixSort.Internal.Util (partBySign)
+import Data.List.RadixSort.Internal.Counters (countAndPartBySign)
+import Data.List.RadixSort.Internal.Util (getSortInfo)
 
 import qualified Data.List as L
--- import "parallel" Control.Parallel (par, pseq)
 import "parallel" Control.Parallel.Strategies (using, rpar, rseq)
+import GHC.ST (runST)
 
-------------------------------------------
-        
 ------------------------------------------
 
 -- | sortFloats partitions between positive and negative and sort by binary repr. (exponent:mantissa) for each set in parallel,
@@ -52,9 +51,10 @@ msdSortFloats [] = []
 msdSortFloats [x] = [x]
 msdSortFloats list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
-    (poss, negs) = partBySign [] [] list
-    sortedPoss = msdRadixSort poss
-    sortedNegs = negs .$ msdRadixSort
+    (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign sortInfo list
+    sortInfo = getSortInfo $ head list
+    sortedPoss = msdRadixSort sortInfo digitsConstPos poss
+    sortedNegs = negs .$ msdRadixSort sortInfo digitsConstNeg
                       .$ L.reverse
 
 
@@ -63,9 +63,10 @@ lsdSortFloats [] = []
 lsdSortFloats [x] = [x]
 lsdSortFloats list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
-    (poss, negs) = partBySign [] [] list
-    sortedPoss = lsdRadixSort poss
-    sortedNegs = negs .$ lsdRadixSort
+    (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign sortInfo list
+    sortInfo = getSortInfo $ head list
+    sortedPoss = lsdRadixSort sortInfo digitsConstPos poss
+    sortedNegs = negs .$ lsdRadixSort sortInfo digitsConstNeg
                       .$ L.reverse
                       
 -- | sortInts partitions between positive and negative and sort each set in parallel
@@ -78,18 +79,20 @@ msdSortInts [] = []
 msdSortInts [x] = [x]
 msdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
-    (poss, negs) = partBySign [] [] list
-    sortedPoss = msdRadixSort poss
-    sortedNegs = msdRadixSort negs
+    (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign sortInfo list
+    sortInfo = getSortInfo $ head list
+    sortedPoss = msdRadixSort sortInfo digitsConstPos poss
+    sortedNegs = msdRadixSort sortInfo digitsConstNeg negs
 
 lsdSortInts :: (RadixRep a) => [a] -> [a]
 lsdSortInts [] = []
 lsdSortInts [x] = [x]
 lsdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
-    (poss, negs) = partBySign [] [] list
-    sortedPoss = lsdRadixSort poss
-    sortedNegs = lsdRadixSort negs
+    (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign sortInfo list
+    sortInfo = getSortInfo $ head list
+    sortedPoss = lsdRadixSort sortInfo digitsConstPos poss
+    sortedNegs = lsdRadixSort sortInfo digitsConstNeg negs
     
 
 -- | sortNats, O(k n) where k= #digits
@@ -98,9 +101,16 @@ lsdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
 msdSortNats :: (RadixRep a) => [a] -> [a]
 msdSortNats [] = []
 msdSortNats [x] = [x]
-msdSortNats list = msdRadixSort list
+msdSortNats list = msdRadixSort sortInfo digitsConstPos poss
+  where
+    (poss, digitsConstPos, _, _) = runST $ countAndPartBySign sortInfo list
+    sortInfo = getSortInfo $ head list
+          
 
 lsdSortNats :: (RadixRep a) => [a] -> [a]
 lsdSortNats [] = []
 lsdSortNats [x] = [x]
-lsdSortNats list = lsdRadixSort list
+lsdSortNats list = lsdRadixSort sortInfo digitsConstPos poss
+  where
+    (poss, digitsConstPos, _, _) = runST $ countAndPartBySign sortInfo list
+    sortInfo = getSortInfo $ head list
