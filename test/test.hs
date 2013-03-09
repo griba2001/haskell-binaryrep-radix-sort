@@ -57,8 +57,7 @@ deepCheck p = do
 main :: IO a
 main = do
         putStrLn "sorting by msd first [Float]"
-        deepCheck ((\s -> checkOrdered $ msdSortFloats s) :: [Float] -> Bool)
-
+        deepCheck ((\s -> let sorted = msdSortFloats s in checkOrdered sorted && (length s == length sorted)) :: [Float] -> Bool)
              
         putStrLn "sorting by msd first [Double]"
         deepCheck ((\s -> checkOrdered $ msdSortFloats s) :: [Double] -> Bool)
@@ -104,7 +103,7 @@ main = do
         putStrLn "\n"
         
         putStrLn "sorting by lsd first [Float]"
-        deepCheck ((\s -> checkOrdered $ lsdSortFloats s) :: [Float] -> Bool)
+        deepCheck ((\s -> let sorted = lsdSortFloats s in checkOrdered sorted && (length s == length sorted)) :: [Float] -> Bool)
 
         
         putStrLn "sorting by lsd first [Double]"
