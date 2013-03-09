@@ -76,7 +76,7 @@ library
   if flag(llvm) && !os(windows)
     Ghc-Options:       -fllvm -O3
   else
-    Ghc-Options:       -O2
+    Ghc-Options:       -O3
 
   if flag(debug)
     cpp-Options: -DDEBUG

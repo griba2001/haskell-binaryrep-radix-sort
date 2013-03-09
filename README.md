@@ -1,8 +1,10 @@
 ## Radix sort of numbers and numerically indexed data types, based on binary representation of primitive types
 
-With msd prefix you have parallel Most significant digit radix sort
+With msd prefix you have parallel Most significant digit radix sort.
 
-With lsd prefix you have Least significant digit radix sort
+With lsd prefix you have Least significant digit radix sort.
+
+Actually the LSD version runs slightly faster.
 
 The Float and Double types have ordered representations within each sign subset.
 
@@ -25,7 +27,7 @@ Sorting floats (Float, Double) or records with a floating-point index:
 ```haskell
     {-# LANGUAGE PackageImports #-}
 
-    import Data.List.RadixSort.Base (msdSortFloats)
+    import Data.List.RadixSort.Base (lsdSortFloats)
     import Data.List.RadixSort.HasIndexFloat (HasIndexFloat(..))
     import Data.List as L
     import "random" System.Random
@@ -45,10 +47,10 @@ Sorting floats (Float, Double) or records with a floating-point index:
         print listF1
 
         putStrLn "\n"
-        print $ msdSortFloats listF1
+        print $ lsdSortFloats listF1
 
         putStrLn "\n"
-        print $ msdSortFloats listF2
+        print $ lsdSortFloats listF2
 
     main = floatExample
 ```
@@ -58,7 +60,7 @@ Sorting integers (type IntN) or records with an IntN index:
 ```haskell
     {-# LANGUAGE PackageImports #-}
 
-    import Data.List.RadixSort.Base (msdSortInts)
+    import Data.List.RadixSort.Base (lsdSortInts)
     import Data.List.RadixSort.HasIndexInt32 (HasIndexInt32(..))
     import Data.List as L
     import "random" System.Random
@@ -79,10 +81,10 @@ Sorting integers (type IntN) or records with an IntN index:
         print listI1
 
         putStrLn "\n"
-        print $ msdSortInts listI1
+        print $ lsdSortInts listI1
 
         putStrLn "\n"
-        print $ msdSortInts listI2
+        print $ lsdSortInts listI2
 
 
     main = intExample
@@ -93,7 +95,7 @@ Sorting naturals (type WordN) or records with a WordN index:
 ```haskell
     {-# LANGUAGE PackageImports #-}
 
-    import Data.List.RadixSort.Base (msdSortNats)
+    import Data.List.RadixSort.Base (lsdSortNats)
     import Data.List.RadixSort.HasIndexWord32 (HasIndexWord32(..))
     import Data.List as L
     import "random" System.Random
@@ -113,10 +115,10 @@ Sorting naturals (type WordN) or records with a WordN index:
 
         print listN1
         putStrLn "\n"
-        print $ msdSortNats listN1
+        print $ lsdSortNats listN1
 
         putStrLn "\n"
-        print $ msdSortNats listN2
+        print $ lsdSortNats listN2
 
     main = wordExample
 
