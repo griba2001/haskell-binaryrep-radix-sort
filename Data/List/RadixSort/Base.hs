@@ -42,7 +42,7 @@ import GHC.ST (runST)
 -- | sortFloats partitions between positive and negative and sort by binary repr. (exponent:mantissa) for each set in parallel,
 -- reversing the negatives list after radixSort.
 --
--- O(k n) where k= #digits, for each signed bag, plus sign partition, negatives reversing and reassembling
+-- O((k+1) n) where k= #digits, plus negatives reversing and appending negs and pos.
 --
 -- use this for Floats and Doubles
                       
@@ -71,7 +71,7 @@ lsdSortFloats list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
                       
 -- | sortInts partitions between positive and negative and sort each set in parallel
 -- 
--- O(k n) where k= #digits, for each signed bag, plus sign partition and reassembling
+-- O((k+1) n) where k= #digits, plus appending negs and pos.
 -- 
 -- use this for Int<N> types
 msdSortInts :: (RadixRep a) => [a] -> [a]
@@ -95,7 +95,7 @@ lsdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
     sortedNegs = lsdRadixSort sortInfo digitsConstNeg negs
     
 
--- | sortNats, O(k n) where k= #digits
+-- | sortNats, O((k+1) n) where k= #digits
 -- 
 -- use this for Word<N> types
 msdSortNats :: (RadixRep a) => [a] -> [a]
