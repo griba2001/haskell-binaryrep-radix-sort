@@ -6,8 +6,8 @@ import Data.List.RadixSort.Internal.Types
 import Data.List.RadixSort.Internal.Util
 
 import qualified Data.List as L
+import Data.Sequence (Seq)
 import qualified Data.Sequence as S
-import qualified Data.Foldable as F
 import "dlist" Data.DList (DList)
 import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
@@ -22,38 +22,48 @@ import Debug.Trace (trace)
 
 ------------------------------------------
 
-sortByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> Int -> [a] -> DList a
-sortByDigit _indexMap _sortInfo _digitsConstancy _digit [] = D.empty
-sortByDigit _indexMap _sortInfo _digitsConstancy _digit [x] = D.singleton x
+sortByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> Int -> (Seq a) -> DList a
+sortByDigit indexMap sortInfo digitsConstancy digit sq =
+    case S.viewl sq of
+      S.EmptyL -> D.empty
+      (x S.:< xs) ->
+        if S.null xs
+           then D.singleton x
+           else runST $ do
+                mvec <- V.thaw emptyVecOfSeqs
+                -- partition by digit
+                partSeqByDigit indexMap sortInfo digit mvec sq
+                vec <- V.freeze mvec
+                let nextDigit = nextSortableDigit digitsConstancy digit
+                if digit == 0 || nextDigit < 0
+                then do
+                        return $ collectVecToDList vec topDigitVal D.empty
 
-sortByDigit indexMap sortInfo digitsConstancy digit list = runST $ do
-        mvec <- V.thaw emptyVecOfSeqs
-        -- partition by digit
-        partListByDigit indexMap sortInfo digit mvec list
-        vec <- V.freeze mvec
-        let nextDigit = nextSortableDigit digitsConstancy digit
-        if digit == 0 || nextDigit < 0 
-           then do
-                return $ collectVecToDList vec topDigitVal D.empty
-                
-           else do
-                let dlists = vec .$ V.toList
-                                 .$ map F.toList
-                                 .$ map (recSort nextDigit)
-                                 
-                return $ D.concat dlists                      
+                else do
+                        let dlists = vec .$ V.toList
+                                         .$ map (recSort nextDigit)
+
+                        return $ D.concat dlists
   where
     emptyVecOfSeqs = V.replicate (topDigitVal+1) S.empty
     topDigitVal = sortInfo .$ siTopDigitVal
     
-    recSort _nextDigit [] = D.empty
-    recSort _nextDigit [x] = D.singleton x
-    recSort _nextDigit [x, y] = if (indexMap x <= indexMap y) `xor` isOrderReverse
-                                   then D.fromList [x, y]
-                                   else D.fromList [y, x]
-                                   
-    recSort nextDigit list' = (sortByDigit indexMap sortInfo digitsConstancy nextDigit list') `using` rpar  -- spark it in parallel
-
+    recSort nextDigit sq' =
+            case S.viewl sq' of
+              S.EmptyL -> D.empty
+              (x S.:< xs) ->
+                 case S.viewl xs of
+                   S.EmptyL -> D.singleton x
+                   (y S.:< ys) ->
+                     if S.null ys
+                        then D.fromList $ order2 x y
+                        else -- three or more elements
+                             (sortByDigit indexMap sortInfo digitsConstancy nextDigit sq') `using` rpar  -- spark it in parallel
+                        
+    order2 x y = if (indexMap x <= indexMap y) `xor` isOrderReverse
+                                   then [x, y]
+                                   else [y, x]
+            
     isOrderReverse = sortInfo .$ siIsOrderReverse
     
 
@@ -82,7 +92,8 @@ msdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (inde
     sortedList = if nextDigit >= 0
                     then D.toList returnList
                     else list
-    returnList = sortByDigit indexMap sortInfo digitsConstancy nextDigit list
+                    
+    returnList = sortByDigit indexMap sortInfo digitsConstancy nextDigit $ S.fromList list
     nextDigit = nextSortableDigit digitsConstancy (topDigit+1)      
     bitsPerDigit = sortInfo .$ siDigitSize
     topDigit = sortInfo .$ siTopDigit

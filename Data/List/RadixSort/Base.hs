@@ -49,9 +49,7 @@ import GHC.ST (runST)
 -- 
 -- Each split group is sparked to compute in parallel
 -- 
--- Worst case O((2k+1) n + length negatives (append)) where k= #digits.
--- 
--- The factor 2 in 2k is because of the Foldable.toList of the partitioned queues ('Seq' a) before next pass
+-- Worst case O((k+1) n + length negatives (append)) where k= #digits.
 
 msdSort :: (RadixRep a) => [a] -> [a]
 msdSort = msdSortBy id
@@ -67,9 +65,7 @@ msdSortBy indexMap list@(x:_) = case repType $ indexMap x of
 
 -- | A first pass to build digit counters is used to split lists by sign, then they are sorted in parallel
 -- 
--- Worst case O((2k+1) n + length negatives (append)) where k= #digits.
--- 
--- The factor 2 in 2k is because of the Foldable.toList of the partitioned queues ('Seq' a) before next pass
+-- Worst case O((k+1) n + length negatives (append)) where k= #digits.
 
 lsdSort :: (RadixRep a) => [a] -> [a]
 lsdSort = lsdSortBy id 

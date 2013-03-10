@@ -6,9 +6,7 @@ import Data.List.RadixSort.Internal.Types
 import Data.List.RadixSort.Internal.Util
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
--- import qualified Data.List as L
 import qualified Data.Sequence as S
-import qualified Data.Foldable as F
 import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
 import qualified "vector" Data.Vector.Mutable as VM
