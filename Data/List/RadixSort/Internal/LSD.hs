@@ -2,11 +2,11 @@
 -- | Least significant digit radix sort
 module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
-import Data.List.RadixSort.Internal.Common
+import Data.List.RadixSort.Internal.Types
 import Data.List.RadixSort.Internal.Util
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
-import qualified Data.List as L
+-- import qualified Data.List as L
 import qualified Data.Sequence as S
 import qualified Data.Foldable as F
 import qualified "dlist" Data.DList as D
@@ -20,19 +20,19 @@ import Data.STRef.Strict (newSTRef, readSTRef, writeSTRef)
 
 ------------------------------------------
 
-lsdRadixSort :: (RadixRep a) => SortInfo -> [Bool] -> [a] -> [a]
-lsdRadixSort _sortInfo _digitsConstancy [] = []
-lsdRadixSort _sortInfo _digitsConstancy [x] = [x]
-lsdRadixSort sortInfo digitsConstancy list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) $ runST $ do
+lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> [a]
+lsdRadixSort _indexMap _sortInfo _digitsConstancy [] = []
+lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = [x]
+lsdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` bitsPerDigit == 0) $ runST $ do
         
         vecIni <- V.thaw emptyVecOfSeqs
         -- partition by digit 0
         let digit' = 0
         if not $ digitsConstancy!!digit'
-          then partListByDigit sortInfo digit' vecIni list
+          then partListByDigit indexMap sortInfo digit' vecIni list
           else do -- constant data on digit 0, write list to digitVal pos.
                  let bitsToShift = 0
-                     digitVal = getDigitVal sortInfo (L.head list) digit' bitsToShift
+                     digitVal = getDigitVal sortInfo (indexMap x) digit' bitsToShift
                  VM.write vecIni digitVal $ S.fromList list    
         
         refVecFrom <- newSTRef vecIni
@@ -48,7 +48,7 @@ lsdRadixSort sortInfo digitsConstancy list = assert (sizeOf (head list) `mod` bi
                     -- read vecFrom queue
                     s <- VM.read vecFrom digitVal
                     -- partition to vecTo queues
-                    partListByDigit sortInfo digit vecTo (F.toList s)
+                    partListByDigit indexMap sortInfo digit vecTo (F.toList s)
 
                 writeSTRef refVecFrom vecTo
                 )

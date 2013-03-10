@@ -2,7 +2,7 @@
 -- | Most significant digit radix sort
 module Data.List.RadixSort.Internal.MSD (msdRadixSort) where
 
-import Data.List.RadixSort.Internal.Common
+import Data.List.RadixSort.Internal.Types
 import Data.List.RadixSort.Internal.Util
 
 import qualified Data.List as L
@@ -22,14 +22,14 @@ import Debug.Trace (trace)
 
 ------------------------------------------
 
-sortByDigit :: (RadixRep a) => SortInfo -> [Bool] -> Int -> [a] -> DList a
-sortByDigit _sortInfo _digitsConstancy _digit [] = D.empty
-sortByDigit _sortInfo _digitsConstancy _digit [x] = D.singleton x
+sortByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> Int -> [a] -> DList a
+sortByDigit _indexMap _sortInfo _digitsConstancy _digit [] = D.empty
+sortByDigit _indexMap _sortInfo _digitsConstancy _digit [x] = D.singleton x
 
-sortByDigit sortInfo digitsConstancy digit list = runST $ do
+sortByDigit indexMap sortInfo digitsConstancy digit list = runST $ do
         mvec <- V.thaw emptyVecOfSeqs
         -- partition by digit
-        partListByDigit sortInfo digit mvec list
+        partListByDigit indexMap sortInfo digit mvec list
         vec <- V.freeze mvec
         let nextDigit = nextSortableDigit digitsConstancy digit
         if digit == 0 || nextDigit < 0 
@@ -48,7 +48,7 @@ sortByDigit sortInfo digitsConstancy digit list = runST $ do
     
     recSort _nextDigit [] = D.empty
     recSort _nextDigit [x] = D.singleton x
-    recSort nextDigit list' = (sortByDigit sortInfo digitsConstancy nextDigit list') `using` rpar  -- spark it in parallel
+    recSort nextDigit list' = (sortByDigit indexMap sortInfo digitsConstancy nextDigit list') `using` rpar  -- spark it in parallel
     
 
 ------------------------------------------
@@ -67,16 +67,16 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
 
 ------------------------------------------
        
-msdRadixSort :: (RadixRep a) => SortInfo -> [Bool] -> [a] -> [a]
-msdRadixSort _sortInfo _digitsConstancy [] = []
-msdRadixSort _sortInfo _digitsConstancy [x] = [x]
-msdRadixSort sortInfo digitsConstancy list = assert (sizeOf (head list) `mod` bitsPerDigit == 0) sortedList
+msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> [a]
+msdRadixSort _indexMap _sortInfo _digitsConstancy [] = []
+msdRadixSort _indexMap _sortInfo _digitsConstancy [x] = [x]
+msdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` bitsPerDigit == 0) sortedList
         
   where
     sortedList = if nextDigit >= 0
                     then D.toList returnList
                     else list
-    returnList = sortByDigit sortInfo digitsConstancy nextDigit list
+    returnList = sortByDigit indexMap sortInfo digitsConstancy nextDigit list
     nextDigit = nextSortableDigit digitsConstancy (topDigit+1)      
     bitsPerDigit = sortInfo .$ siDigitSize
     topDigit = sortInfo .$ siTopDigit

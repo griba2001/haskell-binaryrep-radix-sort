@@ -4,10 +4,10 @@ module Data.List.RadixSort.Internal.Util (
   collectVecToDList,
 ) where
 
-import Data.List.RadixSort.Internal.Common
+import Data.List.RadixSort.Internal.Types
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
-import Data.Bits
+-- import Data.Bits
 -- import qualified Data.List as L
 import Data.Sequence (Seq)
 import qualified Data.Sequence as S
@@ -23,8 +23,8 @@ import GHC.ST (ST)
                        
 ------------------------------------------
 
-partListByDigit :: (RadixRep a) => SortInfo -> Int -> MVector s (Seq a) -> [a] -> ST s ()
-partListByDigit sortInfo' digit' vec' list = do
+partListByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> Int -> MVector s (Seq a) -> [a] -> ST s ()
+partListByDigit indexMap sortInfo' digit' vec' list = do
         partListByDigitR bitsToShift' sortInfo' digit' vec' list
   where      
     bitsToShift' = digit' * (sortInfo' .$ siDigitSize)
@@ -36,7 +36,7 @@ partListByDigit sortInfo' digit' vec' list = do
         partListByDigitR bitsToShift sortInfo digit vec xs
         return ()
       where
-        digitVal = getDigitVal sortInfo x digit bitsToShift
+        digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
         
         
 ------------------------------------------

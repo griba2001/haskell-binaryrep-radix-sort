@@ -25,8 +25,7 @@ or
 Sorting floats (Float, Double) or records with a floating-point index:
 
 ```haskell
-    import Data.List.RadixSort.Base (lsdSortFloats)
-    import Data.List.RadixSort.HasIndexFloat (HasIndexFloat(..))
+    import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
 
     import Data.List as L
     import System.Random
@@ -34,9 +33,6 @@ Sorting floats (Float, Double) or records with a floating-point index:
     import Data.Ord
 
     data FRec = FRec {fieldF:: Float} deriving (Eq, Show)
-
-    instance HasIndexFloat FRec where
-        indexFloat = fieldF
 
     floatExample = do
 
@@ -46,10 +42,10 @@ Sorting floats (Float, Double) or records with a floating-point index:
         print listF1
 
         putStrLn "\n"
-        print $ lsdSortFloats listF1
+        print $ lsdSort listF1
 
         putStrLn "\n"
-        print $ lsdSortFloats listF2
+        print $ lsdSortBy fieldF listF2
 
     main = floatExample
 ```
@@ -57,8 +53,7 @@ Sorting floats (Float, Double) or records with a floating-point index:
 Sorting integers (type IntN) or records with an IntN index:
 
 ```haskell
-    import Data.List.RadixSort.Base (lsdSortInts)
-    import Data.List.RadixSort.HasIndexInt32 (HasIndexInt32(..))
+    import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
 
     import Data.List as L
     import System.Random
@@ -68,9 +63,6 @@ Sorting integers (type IntN) or records with an IntN index:
 
     data IRec = IRec {fieldI:: Int32} deriving (Eq, Show)
 
-    instance HasIndexInt32 IRec where
-        indexInt32 = fieldI
-
     intExample = do
 
         listI1 <- replicateM 10 $ getStdRandom (randomR ((-100)::Int32,100))
@@ -79,10 +71,10 @@ Sorting integers (type IntN) or records with an IntN index:
         print listI1
 
         putStrLn "\n"
-        print $ lsdSortInts listI1
+        print $ lsdSort listI1
 
         putStrLn "\n"
-        print $ lsdSortInts listI2
+        print $ lsdSortBy fieldI listI2
 
 
     main = intExample
@@ -91,8 +83,7 @@ Sorting integers (type IntN) or records with an IntN index:
 Sorting naturals (type WordN) or records with a WordN index:
 
 ```haskell
-    import Data.List.RadixSort.Base (lsdSortNats)
-    import Data.List.RadixSort.HasIndexWord32 (HasIndexWord32(..))
+    import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
 
     import Data.List as L
     import System.Random
@@ -102,9 +93,6 @@ Sorting naturals (type WordN) or records with a WordN index:
 
     data WRec = WRec {fieldW:: Word32} deriving (Eq, Show)
 
-    instance HasIndexWord32 WRec where
-        indexWord32 = fieldW
-
     wordExample = do
 
         listN1 <- replicateM 10 $ getStdRandom (randomR (0::Word32,100))
@@ -112,10 +100,10 @@ Sorting naturals (type WordN) or records with a WordN index:
 
         print listN1
         putStrLn "\n"
-        print $ lsdSortNats listN1
+        print $ lsdSort listN1
 
         putStrLn "\n"
-        print $ lsdSortNats listN2
+        print $ lsdSortBy fieldW listN2
 
     main = wordExample
 

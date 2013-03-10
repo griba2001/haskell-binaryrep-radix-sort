@@ -1,6 +1,5 @@
 
-import Data.List.RadixSort.Base (msdSort, lsdSort, RadixRep)
-import Data.List.RadixSort.HasIndexFloat (HasIndexFloat(..))
+import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy)
 import Data.List as L
 import Data.Int
 import Data.Word
@@ -12,11 +11,8 @@ import Control.Monad (when)
 
 data Rec = Rec {fieldA:: Float} deriving (Eq, Show)
 
-instance HasIndexFloat Rec where
-  indexFloat = fieldA
-
 instance Ord Rec where
-  compare = comparing indexFloat
+  compare = comparing fieldA      
 
 instance Random Rec where
   randomR (Rec lo, Rec hi)  g = (Rec x, g')
@@ -35,7 +31,7 @@ instance Arbitrary Rec where
       (loExp, hiExp) = floatRange (1::Float)
             
 
-checkOrdered :: (Ord a, RadixRep a) => [a] -> Bool    -- Eq a, Num a, 
+checkOrdered :: (Ord a) => [a] -> Bool    -- Eq a, Num a,
 checkOrdered [] = True
 checkOrdered [_] = True
 checkOrdered list = L.all orderedPair $ L.zip list (L.tail list)
@@ -62,7 +58,7 @@ main = do
 
 
         putStrLn "sorting by msd first [Rec Float]"
-        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Rec] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSortBy fieldA s) :: [Rec] -> Bool)
 
         
         
@@ -109,7 +105,7 @@ main = do
 
 
         putStrLn "sorting by lsd first [Rec Float]"
-        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Rec] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSortBy fieldA s) :: [Rec] -> Bool)
 
 
 

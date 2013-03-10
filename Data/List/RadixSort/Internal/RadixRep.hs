@@ -7,7 +7,7 @@ module Data.List.RadixSort.Internal.RadixRep (
 ) where
 
 import Data.Bits
-import Data.List.RadixSort.Internal.Common
+import Data.List.RadixSort.Internal.Types
 
 import Control.Exception (assert)
 
