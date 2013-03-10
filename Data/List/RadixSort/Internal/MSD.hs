@@ -48,7 +48,13 @@ sortByDigit indexMap sortInfo digitsConstancy digit list = runST $ do
     
     recSort _nextDigit [] = D.empty
     recSort _nextDigit [x] = D.singleton x
+    recSort _nextDigit [x, y] = if (indexMap x <= indexMap y) `xor` isOrderReverse
+                                   then D.fromList [x, y]
+                                   else D.fromList [y, x]
+                                   
     recSort nextDigit list' = (sortByDigit indexMap sortInfo digitsConstancy nextDigit list') `using` rpar  -- spark it in parallel
+
+    isOrderReverse = sortInfo .$ siIsOrderReverse
     
 
 ------------------------------------------

@@ -2,6 +2,7 @@
 module Data.List.RadixSort.Internal.Util (
   partListByDigit,
   collectVecToDList,
+  xor,          
 ) where
 
 import Data.List.RadixSort.Internal.Types
@@ -50,4 +51,12 @@ collectVecToDList vec n dl =
         new_accum_dl = dln `D.append` dl
         dln = D.fromList $ F.toList $ vec V.! n
 
-                
+------------------------------------------
+
+xor :: Bool -> Bool -> Bool
+xor False False = False
+xor False True = True
+xor True False = True
+xor True True = False
+
+

@@ -45,9 +45,11 @@ import qualified Data.List as L
 import "parallel" Control.Parallel.Strategies (using, rpar, rseq)
 import GHC.ST (runST)
 
--- | A first pass to build digit counters is used to split lists by sign, then they are sorted in parallel
---
--- O((2k+1) n + length negatives (append)) where k= #digits.
+-- | A first pass to build digit counters is used to split lists by sign, then they are sorted in parallel.
+-- 
+-- Each split group is sparked to compute in parallel
+-- 
+-- Worst case O((k+1) n + length negatives (append)) where k= #digits.
 
 msdSort :: (RadixRep a) => [a] -> [a]
 msdSort = msdSortBy id
@@ -63,7 +65,7 @@ msdSortBy indexMap list@(x:_) = case repType $ indexMap x of
 
 -- | A first pass to build digit counters is used to split lists by sign, then they are sorted in parallel
 -- 
--- O((k+1) n + length negatives (append)) where k= #digits.
+-- Worst case O((k+1) n + length negatives (append)) where k= #digits.
 
 lsdSort :: (RadixRep a) => [a] -> [a]
 lsdSort = lsdSortBy id 
@@ -86,7 +88,7 @@ msdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) L.++ (sortedPoss `
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
     sortInfo = getSortInfo $ indexMap x
     sortedPoss = msdRadixSort indexMap sortInfo digitsConstPos poss
-    sortedNegs = negs .$ msdRadixSort indexMap sortInfo digitsConstNeg
+    sortedNegs = negs .$ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg
                       .$ L.reverse
 
 
@@ -98,7 +100,7 @@ lsdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) L.++ (sortedPoss `
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
     sortInfo = getSortInfo $ indexMap x
     sortedPoss = lsdRadixSort indexMap sortInfo digitsConstPos poss
-    sortedNegs = negs .$ lsdRadixSort indexMap sortInfo digitsConstNeg
+    sortedNegs = negs .$ lsdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg
                       .$ L.reverse
 
 ----------------------------------

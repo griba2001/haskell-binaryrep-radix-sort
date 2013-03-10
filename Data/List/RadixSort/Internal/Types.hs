@@ -34,14 +34,14 @@ cast x = newArray (0 :: Int, 0) x >>= castSTUArray >>= flip readArray 0
 
 -----------------------------------------------------------------
 
-data SortInfo = SortInfo {siDigitSize::Int, siTopDigit::Int, siTopDigitVal::Int, siSigned::SignedQual, siSize::Int}
+data SortInfo = SortInfo {siDigitSize::Int, siTopDigit::Int, siTopDigitVal::Int, siSigned::SignedQual, siSize::Int, siIsOrderReverse::Bool}
 
 data SignedQual = Signed | Unsigned deriving (Eq, Show)
 
 data RepType = RT_Float | RT_IntN | RT_WordN
 
 -- | class to instanciate for a type to be used in radix sorts
-class RadixRep t where
+class (Ord t) => RadixRep t where
 
   -- | obtain a word<N> representation, as for Float: toWordRep = fromIntegral . floatToWord
   toWordRep :: (Bits a, Integral a) => t -> a

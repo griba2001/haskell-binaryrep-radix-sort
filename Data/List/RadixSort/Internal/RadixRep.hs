@@ -21,7 +21,8 @@ getSortInfo x = SortInfo {siDigitSize = bitsPerDigit,
                          siTopDigit = topDigit,
                          siTopDigitVal = topDigitVal,
                          siSigned = signedQual x,
-                         siSize = sizeOf x
+                         siSize = sizeOf x,
+                         siIsOrderReverse = False
                          }
   where
     topDigitVal = bit bitsPerDigit -1
