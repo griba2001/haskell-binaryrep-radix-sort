@@ -22,7 +22,7 @@ or
     cabal haddock
     ...
 
-You can sort RadixRep instances (Float, Double, IntN, WordN) or, records with a mapping function to the types mentioned
+You can sort lists of RadixRep instances (Float, Double, IntN, WordN) or, records with a mapping function to the types mentioned
 
 ```haskell
     import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
