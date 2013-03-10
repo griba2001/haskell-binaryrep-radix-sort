@@ -61,7 +61,7 @@ library
                        Data.List.RadixSort.Internal.RadixRep
                        Data.List.RadixSort.Internal.Counters
 
-  Ghc-Options:         -Wall -fno-warn-orphans
+  Ghc-Options:         -Wall
 
   if flag(llvm) && !os(windows)
     Ghc-Options:       -fllvm -O3
