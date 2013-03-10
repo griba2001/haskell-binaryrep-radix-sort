@@ -51,7 +51,7 @@ import GHC.ST (runST)
 -- 
 -- Worst case O((2k+1) n + length negatives (append)) where k= #digits.
 -- 
--- The factor 2 in 2k is because of reading the partitioned queues ('Seq' a) before next pass
+-- The factor 2 in 2k is because of the Foldable.toList of the partitioned queues ('Seq' a) before next pass
 
 msdSort :: (RadixRep a) => [a] -> [a]
 msdSort = msdSortBy id
@@ -69,7 +69,7 @@ msdSortBy indexMap list@(x:_) = case repType $ indexMap x of
 -- 
 -- Worst case O((2k+1) n + length negatives (append)) where k= #digits.
 -- 
--- The factor 2 in 2k is because of reading the partitioned queues ('Seq' a) before next pass
+-- The factor 2 in 2k is because of the Foldable.toList of the partitioned queues ('Seq' a) before next pass
 
 lsdSort :: (RadixRep a) => [a] -> [a]
 lsdSort = lsdSortBy id 
