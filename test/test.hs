@@ -1,5 +1,9 @@
 
 import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy)
+
+import Timed -- from test dir.
+
+
 import Data.List as L
 import Data.Int
 import Data.Word
@@ -7,7 +11,9 @@ import Data.Ord
 import Test.QuickCheck as QC
 import System.Random
 import System.Exit (exitSuccess, exitWith, ExitCode(..))
-import Control.Monad (when)
+import Control.Monad (when, replicateM)
+import Text.Printf
+
 
 data Rec = Rec {fieldA:: Float} deriving (Eq, Show)
 
@@ -140,5 +146,36 @@ main = do
         putStrLn "sorting by lsd first [Word64]"
         deepCheck ((\s -> let sorted = lsdSort s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
 
+        putStrLn "-------------------"
         
+        let len = 10000 :: Int
+            (loExp, hiExp) = floatRange (1::Float)
+            
+        list <- replicateM len $ getStdRandom (randomR ((2^^(loExp-1))::Float,2^^(hiExp-1)))
+
+        (t1, _s1) <- timed $ msdSort list
+        (t2, _s2) <- timed $ lsdSort list
+        (t3, _s3) <- timed $ L.sort list
+
+        let tmin = min t1 (min t2 t3)
+
+        _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
+
+        putStr "msdSort time: "
+        putTimes t1 tmin
+        
+        putStr "lsdSort time: "
+        putTimes t2 tmin
+        
+        putStr "Data.List time: "
+        putTimes t3 tmin
+        
+        putStrLn "-------------------"
         exitSuccess
+
+  where
+    putTimes t tmin = do
+        putStr $ show t
+        putStr "; ratio vs min. time: x"
+        putStrLn $ show (t/tmin)
+            
