@@ -48,7 +48,7 @@ lsdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (inde
                     -- read vecFrom queue
                     s <- VM.read vecFrom digitVal
                     -- partition to vecTo queues
-                    partListByDigit indexMap sortInfo digit vecTo (F.toList s)
+                    partSeqByDigit indexMap sortInfo digit vecTo s
 
                 writeSTRef refVecFrom vecTo
                 )

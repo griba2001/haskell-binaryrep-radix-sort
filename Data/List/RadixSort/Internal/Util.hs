@@ -1,6 +1,6 @@
 {-# LANGUAGE PackageImports #-}
 module Data.List.RadixSort.Internal.Util (
-  partListByDigit,
+  partListByDigit, partSeqByDigit,
   collectVecToDList,
   xor,          
 ) where
@@ -32,13 +32,31 @@ partListByDigit indexMap sortInfo' digit' vec' list = do
     
     partListByDigitR _bitsToShift _sortInfo _digit _vec []  = return ()
     partListByDigitR bitsToShift sortInfo digit vec (x:xs) = do
+            
         s <- VM.read vec digitVal
         VM.write vec digitVal (s S.|> x)
+        
         partListByDigitR bitsToShift sortInfo digit vec xs
-        return ()
       where
         digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
         
+------------------------------------------
+
+partSeqByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> Int -> MVector s (Seq a) -> Seq a -> ST s ()
+partSeqByDigit indexMap sortInfo' digit' vec' sq = do
+        partSeqByDigitR bitsToShift' sortInfo' digit' vec' (S.viewl sq)
+  where
+    bitsToShift' = digit' * (sortInfo' .$ siDigitSize)
+
+    partSeqByDigitR _bitsToShift _sortInfo _digit _vec S.EmptyL  = return ()
+    partSeqByDigitR bitsToShift sortInfo digit vec (x S.:< xs) = do
+            
+        s <- VM.read vec digitVal
+        VM.write vec digitVal (s S.|> x)
+        
+        partSeqByDigitR bitsToShift sortInfo digit vec (S.viewl xs)
+      where
+        digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
         
 ------------------------------------------
 
