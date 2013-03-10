@@ -22,8 +22,8 @@
 -- Internally uses (.$) = flip ($)
 
 module Data.List.RadixSort.Base (
-  msdSortInts, msdSortFloats, msdSortNats,
-  lsdSortInts, lsdSortFloats, lsdSortNats,
+  msdSort,
+  lsdSort,
   RadixRep(..)
 ) where
 
@@ -31,21 +31,32 @@ import Data.List.RadixSort.Internal.Common
 import Data.List.RadixSort.Internal.MSD (msdRadixSort)
 import Data.List.RadixSort.Internal.LSD (lsdRadixSort)
 import Data.List.RadixSort.Internal.Counters (countAndPartBySign)
-import Data.List.RadixSort.Internal.Util (getSortInfo)
+import Data.List.RadixSort.Internal.RadixRep (getSortInfo)
 
 import qualified Data.List as L
 import "parallel" Control.Parallel.Strategies (using, rpar, rseq)
 import GHC.ST (runST)
 
-------------------------------------------
+-- | O((2k+1) n) where k= #digits.
 
--- | sortFloats partitions between positive and negative and sort by binary repr. (exponent:mantissa) for each set in parallel,
--- reversing the negatives list after radixSort.
---
--- O((k+1) n) where k= #digits, plus negatives reversing and appending negs and pos.
---
--- use this for Floats and Doubles
-                      
+msdSort :: (RadixRep a) => [a] -> [a]
+msdSort[] = []
+msdSort[x] = [x]
+msdSort list@(x:_) = case repType x of
+                           RT_Float -> msdSortFloats list
+                           RT_IntN -> msdSortInts list
+                           RT_WordN -> msdSortNats list
+
+-- | O((k+1) n) where k= #digits.
+                           
+lsdSort :: (RadixRep a) => [a] -> [a]
+lsdSort[] = []
+lsdSort[x] = [x]
+lsdSort list@(x:_) = case repType x of
+                           RT_Float -> lsdSortFloats list
+                           RT_IntN -> lsdSortInts list
+                           RT_WordN -> lsdSortNats list
+                           
 msdSortFloats :: (RadixRep a) => [a] -> [a]
 msdSortFloats [] = []
 msdSortFloats [x] = [x]
@@ -69,11 +80,6 @@ lsdSortFloats list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
     sortedNegs = negs .$ lsdRadixSort sortInfo digitsConstNeg
                       .$ L.reverse
                       
--- | sortInts partitions between positive and negative and sort each set in parallel
--- 
--- O((k+1) n) where k= #digits, plus appending negs and pos.
--- 
--- use this for Int<N> types
 msdSortInts :: (RadixRep a) => [a] -> [a]
 msdSortInts [] = []
 msdSortInts [x] = [x]
@@ -95,9 +101,6 @@ lsdSortInts list = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
     sortedNegs = lsdRadixSort sortInfo digitsConstNeg negs
     
 
--- | sortNats, O((k+1) n) where k= #digits
--- 
--- use this for Word<N> types
 msdSortNats :: (RadixRep a) => [a] -> [a]
 msdSortNats [] = []
 msdSortNats [x] = [x]

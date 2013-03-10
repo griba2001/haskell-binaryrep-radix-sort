@@ -13,3 +13,4 @@ instance HasIndexWord8 t => RadixRep t where
   toWordRep = toWordRep . indexWord8
   sizeOf = sizeOf . indexWord8
   signedQual = signedQual . indexWord8
+  repType = repType . indexWord8

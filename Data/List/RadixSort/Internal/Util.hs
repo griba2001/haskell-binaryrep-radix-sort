@@ -1,12 +1,11 @@
 {-# LANGUAGE PackageImports #-}
 module Data.List.RadixSort.Internal.Util (
-  getSortInfo,
   partListByDigit,
   collectVecToDList,
 ) where
 
 import Data.List.RadixSort.Internal.Common
-import Data.List.RadixSort.Internal.DigitVal (getDigitVal)
+import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import Data.Bits
 -- import qualified Data.List as L
@@ -51,17 +50,4 @@ collectVecToDList vec n dl =
         new_accum_dl = dln `D.append` dl
         dln = D.fromList $ F.toList $ vec V.! n
 
-------------------------------------------
-                
-getSortInfo :: (RadixRep a) => a -> SortInfo
-getSortInfo x = SortInfo {siDigitSize = bitsPerDigit,
-                         siTopDigit = topDigit,
-                         siTopDigitVal = topDigitVal,
-                         siSigned = signedQual x,
-                         siSize = sizeOf x
-                         }
-  where                       
-    topDigitVal = bit bitsPerDigit -1
-    topDigit = (sizeOf x) `div` bitsPerDigit - 1
-    bitsPerDigit = 8
                 

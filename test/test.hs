@@ -1,7 +1,5 @@
 
-import Data.List.RadixSort.Base (msdSortInts, msdSortFloats, msdSortNats,
-                                 lsdSortInts, lsdSortFloats, lsdSortNats,
-                                 RadixRep)
+import Data.List.RadixSort.Base (msdSort, lsdSort, RadixRep)
 import Data.List.RadixSort.HasIndexFloat (HasIndexFloat(..))
 import Data.List as L
 import Data.Int
@@ -57,94 +55,94 @@ deepCheck p = do
 main :: IO a
 main = do
         putStrLn "sorting by msd first [Float]"
-        deepCheck ((\s -> let sorted = msdSortFloats s in checkOrdered sorted && (length s == length sorted)) :: [Float] -> Bool)
+        deepCheck ((\s -> let sorted = msdSort s in checkOrdered sorted && (length s == length sorted)) :: [Float] -> Bool)
              
         putStrLn "sorting by msd first [Double]"
-        deepCheck ((\s -> checkOrdered $ msdSortFloats s) :: [Double] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Double] -> Bool)
 
 
         putStrLn "sorting by msd first [Rec Float]"
-        deepCheck ((\s -> checkOrdered $ msdSortFloats s) :: [Rec] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Rec] -> Bool)
 
         
         
         putStrLn "sorting by msd first [Int8]"
-        deepCheck ((\s -> checkOrdered $ msdSortInts s) :: [Int8] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Int8] -> Bool)
 
         
         putStrLn "sorting by msd first [Int16]"
-        deepCheck ((\s -> checkOrdered $ msdSortInts s) :: [Int16] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Int16] -> Bool)
 
         
         putStrLn "sorting by msd first [Int32]"
-        deepCheck ((\s -> checkOrdered $ msdSortInts s) :: [Int32] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Int32] -> Bool)
 
         
         putStrLn "sorting by msd first [Int64]"
-        deepCheck ((\s -> let sorted = msdSortInts s in checkOrdered sorted && (length s == length sorted)) :: [Int64] -> Bool)
+        deepCheck ((\s -> let sorted = msdSort s in checkOrdered sorted && (length s == length sorted)) :: [Int64] -> Bool)
 
 
         putStrLn "sorting by msd first [Word8]"
-        deepCheck ((\s -> checkOrdered $ msdSortNats s) :: [Word8] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Word8] -> Bool)
 
         
         putStrLn "sorting by msd first [Word16]"
-        deepCheck ((\s -> checkOrdered $ msdSortNats s) :: [Word16] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Word16] -> Bool)
 
         
         putStrLn "sorting by msd first [Word32]"
-        deepCheck ((\s -> checkOrdered $ msdSortNats s) :: [Word32] -> Bool)
+        deepCheck ((\s -> checkOrdered $ msdSort s) :: [Word32] -> Bool)
 
         
         putStrLn "sorting by msd first [Word64]"
-        deepCheck ((\s -> let sorted = msdSortNats s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
+        deepCheck ((\s -> let sorted = msdSort s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
 
         
         putStrLn "\n"
         
         putStrLn "sorting by lsd first [Float]"
-        deepCheck ((\s -> let sorted = lsdSortFloats s in checkOrdered sorted && (length s == length sorted)) :: [Float] -> Bool)
+        deepCheck ((\s -> let sorted = lsdSort s in checkOrdered sorted && (length s == length sorted)) :: [Float] -> Bool)
 
         
         putStrLn "sorting by lsd first [Double]"
-        deepCheck ((\s -> checkOrdered $ lsdSortFloats s) :: [Double] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Double] -> Bool)
 
 
         putStrLn "sorting by lsd first [Rec Float]"
-        deepCheck ((\s -> checkOrdered $ lsdSortFloats s) :: [Rec] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Rec] -> Bool)
 
 
 
         putStrLn "sorting by lsd first [Int8]"
-        deepCheck ((\s -> checkOrdered $ lsdSortInts s) :: [Int8] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Int8] -> Bool)
 
         
         putStrLn "sorting by lsd first [Int16]"
-        deepCheck ((\s -> checkOrdered $ lsdSortInts s) :: [Int16] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Int16] -> Bool)
 
         
         putStrLn "sorting by lsd first [Int32]"
-        deepCheck ((\s -> checkOrdered $ lsdSortInts s) :: [Int32] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Int32] -> Bool)
 
         
         putStrLn "sorting by lsd first [Int64]"
-        deepCheck ((\s -> let sorted = lsdSortInts s in checkOrdered sorted && (length s == length sorted)) :: [Int64] -> Bool)
+        deepCheck ((\s -> let sorted = lsdSort s in checkOrdered sorted && (length s == length sorted)) :: [Int64] -> Bool)
 
         
         putStrLn "sorting by lsd first [Word8]"
-        deepCheck ((\s -> checkOrdered $ lsdSortNats s) :: [Word8] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Word8] -> Bool)
 
         
         putStrLn "sorting by lsd first [Word16]"
-        deepCheck ((\s -> checkOrdered $ lsdSortNats s) :: [Word16] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Word16] -> Bool)
 
         
         putStrLn "sorting by lsd first [Word32]"
-        deepCheck ((\s -> checkOrdered $ lsdSortNats s) :: [Word32] -> Bool)
+        deepCheck ((\s -> checkOrdered $ lsdSort s) :: [Word32] -> Bool)
 
         
         putStrLn "sorting by lsd first [Word64]"
-        deepCheck ((\s -> let sorted = lsdSortNats s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
+        deepCheck ((\s -> let sorted = lsdSort s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
 
         
         exitSuccess

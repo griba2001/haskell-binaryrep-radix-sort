@@ -12,3 +12,4 @@ instance HasIndexFloat t => RadixRep t where
   toWordRep = toWordRep . indexFloat
   sizeOf = sizeOf . indexFloat
   signedQual = signedQual . indexFloat
+  repType = repType . indexFloat

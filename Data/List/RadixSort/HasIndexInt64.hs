@@ -13,3 +13,4 @@ instance HasIndexInt64 t => RadixRep t where
   toWordRep = toWordRep . indexInt64
   sizeOf = sizeOf . indexInt64
   signedQual = signedQual . indexInt64
+  repType = repType . indexInt64

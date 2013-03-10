@@ -4,7 +4,7 @@ module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
 import Data.List.RadixSort.Internal.Common
 import Data.List.RadixSort.Internal.Util
-import Data.List.RadixSort.Internal.DigitVal (getDigitVal)
+import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import qualified Data.List as L
 import qualified Data.Sequence as S

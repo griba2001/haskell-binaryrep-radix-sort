@@ -12,3 +12,4 @@ instance HasIndexDouble t => RadixRep t where
   toWordRep = toWordRep . indexDouble
   sizeOf = sizeOf . indexDouble
   signedQual = signedQual . indexDouble
+  repType = repType . indexDouble

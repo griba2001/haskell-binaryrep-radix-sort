@@ -1,8 +1,9 @@
 {-# LANGUAGE PackageImports #-}
-module Data.List.RadixSort.Internal.DigitVal (
+module Data.List.RadixSort.Internal.RadixRep (
+  getSortInfo,
+  isNeg,
   getDigitVal,
   getAllDigitVals,
-  isNeg          
 ) where
 
 import Data.Bits
@@ -13,6 +14,21 @@ import Control.Exception (assert)
 import qualified Data.List as L
 import Data.Word (Word8, Word16, Word32, Word64)
 import Text.Printf (printf)
+------------------------------------------
+
+getSortInfo :: (RadixRep a) => a -> SortInfo
+getSortInfo x = SortInfo {siDigitSize = bitsPerDigit,
+                         siTopDigit = topDigit,
+                         siTopDigitVal = topDigitVal,
+                         siSigned = signedQual x,
+                         siSize = sizeOf x
+                         }
+  where
+    topDigitVal = bit bitsPerDigit -1
+    topDigit = (sizeOf x) `div` bitsPerDigit - 1
+    bitsPerDigit = 8
+
+------------------------------------------
 
 isNeg ::  (RadixRep a) => a -> Bool
 isNeg y = if signedQual y == Unsigned
