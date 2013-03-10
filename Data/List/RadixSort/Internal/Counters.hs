@@ -4,7 +4,7 @@ module Data.List.RadixSort.Internal.Counters (
 ) where
 
 import Data.List.RadixSort.Internal.Common
-import Data.List.RadixSort.Internal.DigitVal (getAllDigitVals, isNeg)
+import Data.List.RadixSort.Internal.RadixRep (getAllDigitVals, isNeg)
 
 import "vector" Data.Vector (Vector)
 import qualified "vector" Data.Vector as V
