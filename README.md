@@ -22,7 +22,7 @@ or
     cabal haddock
     ...
 
-Sorting floats (Float, Double) or records with a floating-point index:
+You can sort RadixRep instances (Float, Double, IntN, WordN) or, records with a mapping function to the types mentioned
 
 ```haskell
     import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
@@ -37,73 +37,15 @@ Sorting floats (Float, Double) or records with a floating-point index:
     floatExample = do
 
         listF1 <- replicateM 10 $ getStdRandom (randomR ((-100)::Float,100))
-        let listF2 = L.map FRec listF1
+
+        let listF2 = L.map FRec listF1   -- :: [FRec]
 
         print listF1
 
-        putStrLn "\n"
         print $ lsdSort listF1
 
-        putStrLn "\n"
         print $ lsdSortBy fieldF listF2
 
     main = floatExample
 ```
-
-Sorting integers (type IntN) or records with an IntN index:
-
-```haskell
-    import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
-
-    import Data.List as L
-    import System.Random
-    import Control.Monad
-    import Data.Int
-    import Data.Ord
-
-    data IRec = IRec {fieldI:: Int32} deriving (Eq, Show)
-
-    intExample = do
-
-        listI1 <- replicateM 10 $ getStdRandom (randomR ((-100)::Int32,100))
-        let listI2 = L.map IRec listI1
-
-        print listI1
-
-        putStrLn "\n"
-        print $ lsdSort listI1
-
-        putStrLn "\n"
-        print $ lsdSortBy fieldI listI2
-
-
-    main = intExample
-```
-
-Sorting naturals (type WordN) or records with a WordN index:
-
-```haskell
-    import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
-
-    import Data.List as L
-    import System.Random
-    import Control.Monad
-    import Data.Word
-    import Data.Ord
-
-    data WRec = WRec {fieldW:: Word32} deriving (Eq, Show)
-
-    wordExample = do
-
-        listN1 <- replicateM 10 $ getStdRandom (randomR (0::Word32,100))
-        let listN2 = L.map WRec listN1
-
-        print listN1
-        putStrLn "\n"
-        print $ lsdSort listN1
-
-        putStrLn "\n"
-        print $ lsdSortBy fieldW listN2
-
-    main = wordExample
 
