@@ -181,7 +181,7 @@ benchmark list = do
         putStr "lsdSort time: "
         putTimes t2 tmin
 
-        putStr "Data.List time: "
+        putStr "Data.List.sort time: "
         putTimes t3 tmin
   where
     putTimes t tmin = do
