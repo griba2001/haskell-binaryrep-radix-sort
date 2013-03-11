@@ -21,9 +21,9 @@ getSortInfo sortType x = SortInfo {
                          siDigitSize = bitsPerDigit,
                          siTopDigit = (sizeOf x) `div` bitsPerDigit - 1,
                          siTopDigitVal = bit bitsPerDigit -1,
-                         siSigned = signedQual x,
                          siSize = sizeOf x,
-                         siIsOrderReverse = False
+                         siIsOrderReverse = False,
+                         siIsSigned = repType x /= RT_WordN
                          }
   where
     bitsPerDigit = case sortType of
@@ -33,7 +33,7 @@ getSortInfo sortType x = SortInfo {
 ------------------------------------------
 
 isNeg ::  (RadixRep a) => a -> Bool
-isNeg y = if signedQual y == Unsigned
+isNeg y = if repType y == RT_WordN
              then False
              else let s = sizeOf y
                   in case s of
@@ -84,7 +84,7 @@ wordGetDigitVal SortInfo {..} bits (digit, bitsToShift) =
       assert (digit >= 0 && digit <= siTopDigit) $
         fromIntegral (shiftR (bits .&. mask) bitsToShift)
     where
-      mask = if digit == siTopDigit && siSigned == Signed
+      mask = if digit == siTopDigit && siIsSigned
               then shiftL digitMaskSignExcl bitsToShift
               else shiftL digitMask bitsToShift
 
