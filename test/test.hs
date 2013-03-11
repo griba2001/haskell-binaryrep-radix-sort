@@ -1,5 +1,5 @@
 
-import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy)
+import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy, RadixRep)
 
 import Timed -- from test dir.
 
@@ -11,7 +11,7 @@ import Data.Ord
 import Test.QuickCheck as QC
 import System.Random
 import System.Exit (exitSuccess, exitWith, ExitCode(..))
-import Control.Monad (when, replicateM)
+import Control.Monad as M
 import Text.Printf
 
 
@@ -51,7 +51,7 @@ isQCSuccess _ = False
 deepCheck :: Testable prop => prop -> IO ()
 deepCheck p = do
         res <- quickCheckWithResult (stdArgs { maxSuccess = 200, maxSize = 200}) p
-        when (not $ isQCSuccess res) $ exitWith (ExitFailure 1)
+        M.when (not $ isQCSuccess res) $ exitWith (ExitFailure 1)
         return ()
 
 main :: IO a
@@ -150,32 +150,42 @@ main = do
         
         let len = 10000 :: Int
             (loExp, hiExp) = floatRange (1::Float)
+            randomRFloat = randomR ((2^^(loExp-1))::Float,2^^(hiExp-1))
+            randomRInt32 = randomR ((minBound::Int32),(maxBound::Int32))
             
-        list <- replicateM len $ getStdRandom (randomR ((2^^(loExp-1))::Float,2^^(hiExp-1)))
+        _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
+        
+        M.replicateM_ 5  
+             ((M.replicateM len $ getStdRandom randomRFloat) >>= benchmark)
 
+        _ <- printf "\n\nComparison of times sorting a %d size list of Int32\n" len
+        
+        M.replicateM_ 5
+             ((M.replicateM len $ getStdRandom randomRInt32) >>= benchmark)
+        
+        putStrLn "-------------------"
+        exitSuccess
+
+
+benchmark :: (Ord a, RadixRep a) => [a] -> IO ()
+benchmark list = do
         (t1, _s1) <- timed $ msdSort list
         (t2, _s2) <- timed $ lsdSort list
         (t3, _s3) <- timed $ L.sort list
 
         let tmin = min t1 (min t2 t3)
 
-        _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
-
-        putStr "msdSort time: "
+        putStr "\nmsdSort time: "
         putTimes t1 tmin
-        
+
         putStr "lsdSort time: "
         putTimes t2 tmin
-        
+
         putStr "Data.List time: "
         putTimes t3 tmin
-        
-        putStrLn "-------------------"
-        exitSuccess
-
   where
     putTimes t tmin = do
         putStr $ show t
         putStr "; ratio vs min. time: x"
         putStrLn $ show (t/tmin)
-            
+        
