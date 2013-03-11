@@ -1,4 +1,4 @@
-{-# LANGUAGE PackageImports #-}
+{-# LANGUAGE PackageImports, RecordWildCards #-}
 -- | Least significant digit radix sort
 module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
@@ -21,7 +21,7 @@ import Data.STRef.Strict (newSTRef, readSTRef, writeSTRef)
 lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> [a]
 lsdRadixSort _indexMap _sortInfo _digitsConstancy [] = []
 lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = [x]
-lsdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` bitsPerDigit == 0) $ runST $ do
+lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ runST $ do
         
         vecIni <- V.thaw emptyVecOfSeqs
         -- partition by digit 0
@@ -35,14 +35,14 @@ lsdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (inde
         
         refVecFrom <- newSTRef vecIni
 
-        M.when (topDigit > 0) $
-           M.forM_ [1..topDigit] $ \digit -> do
+        M.when (siTopDigit > 0) $
+           M.forM_ [1..siTopDigit] $ \digit -> do
              M.when ( not $ digitsConstancy!!digit)
                 (do  -- sort by digit
                 vecFrom <- readSTRef refVecFrom
                 vecTo <- V.thaw emptyVecOfSeqs
 
-                M.forM_ [0..topDigitVal] $ \digitVal -> do
+                M.forM_ [0..siTopDigitVal] $ \digitVal -> do
                     -- read vecFrom queue
                     s <- VM.read vecFrom digitVal
                     -- partition to vecTo queues
@@ -53,14 +53,10 @@ lsdRadixSort indexMap sortInfo digitsConstancy list@(x:_) = assert (sizeOf (inde
 
         lastDigitSortedMVec <- readSTRef refVecFrom
         lastDigitSortedVec <- V.freeze lastDigitSortedMVec
-        let dlist = collectVecToDList lastDigitSortedVec topDigitVal D.empty
+        let dlist = collectVecToDList lastDigitSortedVec siTopDigitVal D.empty
         return $ D.toList dlist
   where
 
-    emptyVecOfSeqs = V.replicate (topDigitVal+1) S.empty
-    
-    topDigitVal = sortInfo .$ siTopDigitVal
-    topDigit = sortInfo .$ siTopDigit
-    bitsPerDigit = sortInfo .$ siDigitSize
+    emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty
 
 ------------------------------------------

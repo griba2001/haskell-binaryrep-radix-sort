@@ -1,4 +1,4 @@
-{-# LANGUAGE PackageImports #-}
+{-# LANGUAGE PackageImports, RecordWildCards #-}
 module Data.List.RadixSort.Internal.RadixRep (
   getSortInfo,
   isNeg,
@@ -72,30 +72,23 @@ getAllDigitVals sortInfo x =
 ------------------------------------------
 
 wordGetAllDigitVal :: (Bits a, Integral a) => SortInfo -> a -> [Int]
-wordGetAllDigitVal sortInfo x =
+wordGetAllDigitVal sortInfo @ SortInfo {..} x =
         L.zip digitList bitsToShiftList
             .$ L.map (wordGetDigitVal sortInfo x)
   where
-    digitList = [0..topDigit]
-    bitsToShiftList = [0,bitsPerDigit..(size-bitsPerDigit)]
-    topDigit = sortInfo .$ siTopDigit
-    size = sortInfo .$ siSize
-    bitsPerDigit = sortInfo .$ siDigitSize
+    digitList = [0..siTopDigit]
+    bitsToShiftList = [0,siDigitSize..(siSize-siDigitSize)]
 
 ------------------------------------------
 
 wordGetDigitVal :: (Bits a, Integral a) => SortInfo -> a -> (Int, Int) ->  Int
-wordGetDigitVal sortInfo bits (digit, bitsToShift) =
-      assert (digit >= 0 && digit <= topDigit) $ fromIntegral digitVal
+wordGetDigitVal SortInfo {..} bits (digit, bitsToShift) =
+      assert (digit >= 0 && digit <= siTopDigit) $
+        fromIntegral (shiftR (bits .&. mask) bitsToShift)
     where
-      digitVal = shiftR (bits .&. mask) bitsToShift
-
-      mask = if digit == topDigit && signed == Signed
+      mask = if digit == siTopDigit && siSigned == Signed
               then shiftL digitMaskSignExcl bitsToShift
               else shiftL digitMask bitsToShift
 
-      digitMask = bit bitsPerDigit -1
-      digitMaskSignExcl = (bit (bitsPerDigit-1) -1)    -- sign excluded
-      bitsPerDigit = sortInfo .$ siDigitSize
-      topDigit = sortInfo .$ siTopDigit
-      signed = sortInfo .$ siSigned
+      digitMask = bit siDigitSize -1
+      digitMaskSignExcl = (bit (siDigitSize-1) -1)    -- sign excluded

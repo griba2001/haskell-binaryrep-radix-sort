@@ -1,4 +1,4 @@
-{-# LANGUAGE PackageImports, CPP, BangPatterns #-}
+{-# LANGUAGE PackageImports, CPP, BangPatterns, RecordWildCards #-}
 module Data.List.RadixSort.Internal.Counters (
   countAndPartBySign
 ) where
@@ -17,29 +17,25 @@ import Control.Monad as M
 ------------------------------------------
 
 countAndPartBySign :: (RadixRep b) => (a -> b) -> SortInfo -> [a] -> ST s ([a], [Bool], [a], [Bool])
-countAndPartBySign indexMap sortInfo list = do
+countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
 
-    vecPos <- V.replicateM (topDigit+1) $ VM.replicate (topDigitVal+1) (0::Int)
-    vecNeg <- V.replicateM (topDigit+1) $ VM.replicate (topDigitVal+1) (0::Int)
+    vecPos <- V.replicateM (siTopDigit+1) $ VM.replicate (siTopDigitVal+1) (0::Int)
+    vecNeg <- V.replicateM (siTopDigit+1) $ VM.replicate (siTopDigitVal+1) (0::Int)
     
     (lenPos, poss, lenNeg, negs) <- updateCounters indexMap sortInfo vecPos 0 [] vecNeg 0 [] list
     
-    digitsConstPos <- M.forM [0..topDigit] $ \digit -> do
+    digitsConstPos <- M.forM [0..siTopDigit] $ \digit -> do
             let mvecCounters = vecPos V.! digit
             vecCounters <- V.freeze mvecCounters
             return $ V.any (== lenPos) vecCounters
 
-    digitsConstNeg <- M.forM [0..topDigit] $ \digit -> do
+    digitsConstNeg <- M.forM [0..siTopDigit] $ \digit -> do
             let mvecCounters = vecNeg V.! digit
             vecCounters <- V.freeze mvecCounters
             return $ V.any (== lenNeg) vecCounters
 
     return (poss, digitsConstPos, negs, digitsConstNeg)
             
-  where
-        topDigit = sortInfo .$ siTopDigit
-        topDigitVal = sortInfo .$ siTopDigitVal
-
 -----------------------------
 
 updateCounters :: (RadixRep b) => (a -> b) -> SortInfo ->
@@ -47,9 +43,9 @@ updateCounters :: (RadixRep b) => (a -> b) -> SortInfo ->
                   Vector (MVector s Int) -> Int -> [a] ->
                                                    [a] -> ST s (Int, [a], Int, [a])
 updateCounters _indexMap _sortInfo _vecPos cntPos accumPos _vecNeg cntNeg accumNeg []  = return (cntPos, accumPos, cntNeg, accumNeg)
-updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg cntNeg accumNeg (x:xs) = do
+updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg cntNeg accumNeg (x:xs) = do
             
-        M.forM_ [0..topDigit] $ \digit -> do
+        M.forM_ [0..siTopDigit] $ \digit -> do
             let mvecCounters = if isNegIndexVal
                                    then vecNeg V.! digit
                                    else vecPos V.! digit
@@ -62,7 +58,6 @@ updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg cntNeg accumNeg (
            then updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg (cntNeg+1) (x:accumNeg) xs
            else updateCounters indexMap sortInfo vecPos (cntPos+1) (x:accumPos) vecNeg cntNeg accumNeg xs
   where
-        topDigit = sortInfo .$ siTopDigit
         ! allDigitVals = getAllDigitVals sortInfo indexVal
         ! indexVal = indexMap x
         ! isNegIndexVal = isNeg indexVal
