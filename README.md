@@ -4,7 +4,7 @@ With msd prefix you have parallel Most significant digit radix sort.
 
 With lsd prefix you have Least significant digit radix sort.
 
-Actually the MSD version runs faster in average, although both methods run slower than Data.List.sort (LSD minimum 15 times slower, and MSD minimum 10 times slower sorting [Float])
+Actually the MSD version runs faster in average, although both methods run slower than Data.List.sort (LSD minimum 15 times slower, and MSD minimum 10 times slower sorting 10000 [Float])
 
 The Float and Double types have ordered representations within each sign subset.
 
