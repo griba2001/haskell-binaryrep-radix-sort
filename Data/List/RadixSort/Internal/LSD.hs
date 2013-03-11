@@ -7,6 +7,7 @@ import Data.List.RadixSort.Internal.Util
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import qualified Data.Sequence as S
+import "dlist" Data.DList (DList)
 import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
 import qualified "vector" Data.Vector.Mutable as VM
@@ -18,9 +19,9 @@ import Data.STRef.Strict (newSTRef, readSTRef, writeSTRef)
 
 ------------------------------------------
 
-lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> [a]
-lsdRadixSort _indexMap _sortInfo _digitsConstancy [] = []
-lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = [x]
+lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> DList a
+lsdRadixSort _indexMap _sortInfo _digitsConstancy [] = D.empty
+lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
 lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ runST $ do
         
         vecIni <- V.thaw emptyVecOfSeqs
@@ -53,8 +54,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = asse
 
         lastDigitSortedMVec <- readSTRef refVecFrom
         lastDigitSortedVec <- V.freeze lastDigitSortedMVec
-        let dlist = collectVecToDList lastDigitSortedVec siTopDigitVal D.empty
-        return $ D.toList dlist
+        return $ collectVecToDList lastDigitSortedVec siTopDigitVal D.empty
   where
 
     emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty

@@ -4,7 +4,7 @@ With msd prefix you have parallel Most significant digit radix sort.
 
 With lsd prefix you have Least significant digit radix sort.
 
-Actually the LSD version runs faster in average, although both methods run slower than Data.List.sort (LSD minimum 15 times slower, and MSD minimum 20 times slower sorting [Float])
+Actually the MSD version runs faster in average, although both methods run slower than Data.List.sort (LSD minimum 15 times slower, and MSD minimum 10 times slower sorting [Float])
 
 The Float and Double types have ordered representations within each sign subset.
 
@@ -25,7 +25,7 @@ or
 You can sort lists of RadixRep instances (Float, Double, IntN, WordN) or, records with a mapping function to the types mentioned
 
 ```haskell
-    import Data.List.RadixSort.Base (lsdSort, lsdSortBy)
+    import Data.List.RadixSort.Base (msdSort, msdSortBy)
 
     import Data.List as L
     import System.Random
@@ -42,9 +42,9 @@ You can sort lists of RadixRep instances (Float, Double, IntN, WordN) or, record
 
         print listF1
 
-        print $ lsdSort listF1
+        print $ msdSort listF1
 
-        print $ lsdSortBy fieldF listF2
+        print $ msdSortBy fieldF listF2
 
     main = floatExample
 ```

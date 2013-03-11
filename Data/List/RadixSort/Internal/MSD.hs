@@ -81,17 +81,14 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
 
 ------------------------------------------
        
-msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> [a]
-msdRadixSort _indexMap _sortInfo _digitsConstancy [] = []
-msdRadixSort _indexMap _sortInfo _digitsConstancy [x] = [x]
-msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` siDigitSize == 0) sortedList
-        
+msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] ->  DList a
+msdRadixSort _indexMap _sortInfo _digitsConstancy [] = D.empty
+msdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
+msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ 
+  if nextDigit >= 0
+                    then sortByDigit indexMap sortInfo digitsConstancy nextDigit $ S.fromList list
+                    else D.fromList list
   where
-    sortedList = if nextDigit >= 0
-                    then D.toList returnList
-                    else list
-                    
-    returnList = sortByDigit indexMap sortInfo digitsConstancy nextDigit $ S.fromList list
     nextDigit = nextSortableDigit digitsConstancy (siTopDigit+1)      
           
         
