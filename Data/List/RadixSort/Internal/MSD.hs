@@ -41,7 +41,7 @@ sortByDigit indexMap sortInfo digitsConstancy digit sq =
 
                 else do
                         let dlists = vec .$ V.toList
-                                         .$ map (recSort nextDigit)
+                                         .$ L.map (recSort nextDigit)
 
                         return $ D.concat dlists
   where
