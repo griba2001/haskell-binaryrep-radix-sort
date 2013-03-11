@@ -16,18 +16,21 @@ import Data.Word (Word8, Word16, Word32, Word64)
 import Text.Printf (printf)
 ------------------------------------------
 
-getSortInfo :: (RadixRep a) => a -> SortInfo
-getSortInfo x = SortInfo {siDigitSize = bitsPerDigit,
+getSortInfo :: (RadixRep a) => SortType -> a -> SortInfo
+getSortInfo sortType x = SortInfo {siDigitSize = bitsPerDigit,
                          siTopDigit = topDigit,
                          siTopDigitVal = topDigitVal,
                          siSigned = signedQual x,
-                         siSize = sizeOf x,
+                         siSize = size,
                          siIsOrderReverse = False
                          }
   where
     topDigitVal = bit bitsPerDigit -1
     topDigit = (sizeOf x) `div` bitsPerDigit - 1
-    bitsPerDigit = 8
+    size = sizeOf x
+    bitsPerDigit = case sortType of
+                        ST_LSD -> 8
+                        ST_MSD -> 4
 
 ------------------------------------------
 

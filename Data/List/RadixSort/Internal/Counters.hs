@@ -1,4 +1,4 @@
-{-# LANGUAGE PackageImports, CPP #-}
+{-# LANGUAGE PackageImports, CPP, BangPatterns #-}
 module Data.List.RadixSort.Internal.Counters (
   countAndPartBySign
 ) where
@@ -50,7 +50,7 @@ updateCounters _indexMap _sortInfo _vecPos cntPos accumPos _vecNeg cntNeg accumN
 updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg cntNeg accumNeg (x:xs) = do
             
         M.forM_ [0..topDigit] $ \digit -> do
-            let mvecCounters = if isNeg (indexMap x)
+            let mvecCounters = if isNegIndexVal
                                    then vecNeg V.! digit
                                    else vecPos V.! digit
                                    
@@ -58,10 +58,12 @@ updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg cntNeg accumNeg (
             dvCnt <- VM.read mvecCounters digitVal
             VM.write mvecCounters digitVal (dvCnt +1)
 
-        if isNeg (indexMap x)
+        if isNegIndexVal
            then updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg (cntNeg+1) (x:accumNeg) xs
            else updateCounters indexMap sortInfo vecPos (cntPos+1) (x:accumPos) vecNeg cntNeg accumNeg xs
   where
         topDigit = sortInfo .$ siTopDigit
-        allDigitVals = getAllDigitVals sortInfo (indexMap x)
+        ! allDigitVals = getAllDigitVals sortInfo indexVal
+        ! indexVal = indexMap x
+        ! isNegIndexVal = isNeg indexVal
   

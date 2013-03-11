@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes, FlexibleContexts #-}
 module Data.List.RadixSort.Internal.Types (
-  RadixRep(..), SignedQual(..), SortInfo(..), RepType(..),
+  RadixRep(..), SignedQual(..), SortInfo(..), RepType(..), SortType(..),
   (.$)
 ) where
 
@@ -34,11 +34,13 @@ cast x = newArray (0 :: Int, 0) x >>= castSTUArray >>= flip readArray 0
 
 -----------------------------------------------------------------
 
-data SortInfo = SortInfo {siDigitSize::Int, siTopDigit::Int, siTopDigitVal::Int, siSigned::SignedQual, siSize::Int, siIsOrderReverse::Bool}
+data SortInfo = SortInfo {siDigitSize:: !Int, siTopDigit:: !Int, siTopDigitVal:: !Int, siSigned:: !SignedQual, siSize:: !Int, siIsOrderReverse:: !Bool}
 
 data SignedQual = Signed | Unsigned deriving (Eq, Show)
 
 data RepType = RT_Float | RT_IntN | RT_WordN
+
+data SortType = ST_LSD | ST_MSD
 
 -- | class to instanciate for a type to be used in radix sorts
 class (Ord t) => RadixRep t where

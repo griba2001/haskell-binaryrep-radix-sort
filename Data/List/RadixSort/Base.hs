@@ -13,7 +13,7 @@
 
   Here we partition numbers by sign and sort both lists in parallel (you should link with -threaded)
 
-  The digit size is set to 8 bits.
+  The digit size is set to 8 bits for LSD and set to 4 for MSD as this values minimize the benchmark times.
 
   Digit value queues ('Seq' a) are appended as difference lists ('DList' from package dlist, O(1) on append)
 
@@ -86,7 +86,7 @@ msdSortFloats _indexMap [x] = [x]
 msdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo $ indexMap x
+    sortInfo = getSortInfo ST_MSD $ indexMap x
     sortedPoss = msdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = negs .$ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg
                       .$ L.reverse
@@ -98,7 +98,7 @@ lsdSortFloats _indexMap [x] = [x]
 lsdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo $ indexMap x
+    sortInfo = getSortInfo ST_LSD $ indexMap x
     sortedPoss = lsdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = negs .$ lsdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg
                       .$ L.reverse
@@ -111,7 +111,7 @@ msdSortInts _indexMap [x] = [x]
 msdSortInts indexMap list@(x:_) = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo $ indexMap x
+    sortInfo = getSortInfo ST_MSD $ indexMap x
     sortedPoss = msdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = msdRadixSort indexMap sortInfo digitsConstNeg negs
 
@@ -121,7 +121,7 @@ lsdSortInts _indexMap [x] = [x]
 lsdSortInts indexMap list@(x:_) = (sortedNegs `using` rpar) L.++ (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo $ indexMap x
+    sortInfo = getSortInfo ST_LSD $ indexMap x
     sortedPoss = lsdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = lsdRadixSort indexMap sortInfo digitsConstNeg negs
     
@@ -133,7 +133,7 @@ msdSortNats _indexMap [x] = [x]
 msdSortNats indexMap list@(x:_) = msdRadixSort indexMap sortInfo digitsConstPos poss
   where
     (poss, digitsConstPos, _, _) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo $ indexMap x
+    sortInfo = getSortInfo ST_MSD $ indexMap x
           
 
 lsdSortNats :: (RadixRep b) => (a -> b) -> [a] -> [a]
@@ -142,4 +142,4 @@ lsdSortNats _indexMap [x] = [x]
 lsdSortNats indexMap list@(x:_) = lsdRadixSort indexMap sortInfo digitsConstPos poss
   where
     (poss, digitsConstPos, _, _) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo $ indexMap x
+    sortInfo = getSortInfo ST_LSD $ indexMap x
