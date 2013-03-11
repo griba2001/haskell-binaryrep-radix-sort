@@ -151,7 +151,7 @@ main = do
         let len = 10000 :: Int
             (loExp, hiExp) = floatRange (1::Float)
             randomRFloat = randomR ((2^^(loExp-1))::Float,2^^(hiExp-1))
-            randomRInt32 = randomR ((minBound::Int32),(maxBound::Int32))
+            randomRInt32 = randomR ((minBound::Int32),maxBound)
             
         _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
         
