@@ -1,4 +1,4 @@
-{-# LANGUAGE PackageImports #-}
+{-# LANGUAGE PackageImports, RecordWildCards #-}
 module Data.List.RadixSort.Internal.Util (
   partListByDigit, partSeqByDigit,
   collectVecToDList,
@@ -25,10 +25,10 @@ import GHC.ST (ST)
 ------------------------------------------
 
 partListByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> Int -> MVector s (Seq a) -> [a] -> ST s ()
-partListByDigit indexMap sortInfo' digit' vec' list = do
+partListByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' list = do
         partListByDigitR bitsToShift' sortInfo' digit' vec' list
   where      
-    bitsToShift' = digit' * (sortInfo' .$ siDigitSize)
+    bitsToShift' = digit' * siDigitSize
     
     partListByDigitR _bitsToShift _sortInfo _digit _vec []  = return ()
     partListByDigitR bitsToShift sortInfo digit vec (x:xs) = do
@@ -43,10 +43,10 @@ partListByDigit indexMap sortInfo' digit' vec' list = do
 ------------------------------------------
 
 partSeqByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> Int -> MVector s (Seq a) -> Seq a -> ST s ()
-partSeqByDigit indexMap sortInfo' digit' vec' sq = do
+partSeqByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' sq = do
         partSeqByDigitR bitsToShift' sortInfo' digit' vec' (S.viewl sq)
   where
-    bitsToShift' = digit' * (sortInfo' .$ siDigitSize)
+    bitsToShift' = digit' * siDigitSize
 
     partSeqByDigitR _bitsToShift _sortInfo _digit _vec S.EmptyL  = return ()
     partSeqByDigitR bitsToShift sortInfo digit vec (x S.:< xs) = do
