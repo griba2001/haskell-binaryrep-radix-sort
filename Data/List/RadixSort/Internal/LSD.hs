@@ -53,7 +53,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = asse
                 )
 
         readSTRef refVecFrom >>= V.freeze >>= (\vec ->
-                        return $ collectVecToDList vec siTopDigitVal D.empty)
+                        return $ collectVecToDList siTopDigitVal D.empty vec)
   where
 
     emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty

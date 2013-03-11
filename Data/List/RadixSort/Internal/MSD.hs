@@ -37,7 +37,7 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
                 let nextDigit = nextSortableDigit digitsConstancy digit
                 if digit == 0 || nextDigit < 0
                 then do
-                        return $ collectVecToDList vec siTopDigitVal D.empty
+                        return $ collectVecToDList siTopDigitVal D.empty vec
 
                 else do
                         let dlists = vec .$ V.toList

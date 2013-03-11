@@ -60,11 +60,11 @@ partSeqByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' sq = do
         
 ------------------------------------------
 
-collectVecToDList :: Vector (Seq a) -> Int -> DList a -> DList a
-collectVecToDList vec n dl =
+collectVecToDList :: Int -> DList a -> Vector (Seq a) -> DList a
+collectVecToDList n dl vec =
         if n == 0
            then new_accum_dl
-           else collectVecToDList vec (n-1) new_accum_dl
+           else collectVecToDList (n-1) new_accum_dl vec
       where
         new_accum_dl = dln `D.append` dl
         dln = D.fromList $ F.toList $ vec V.! n
