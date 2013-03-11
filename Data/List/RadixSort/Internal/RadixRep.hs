@@ -17,17 +17,15 @@ import Text.Printf (printf)
 ------------------------------------------
 
 getSortInfo :: (RadixRep a) => SortType -> a -> SortInfo
-getSortInfo sortType x = SortInfo {siDigitSize = bitsPerDigit,
-                         siTopDigit = topDigit,
-                         siTopDigitVal = topDigitVal,
+getSortInfo sortType x = SortInfo {
+                         siDigitSize = bitsPerDigit,
+                         siTopDigit = (sizeOf x) `div` bitsPerDigit - 1,
+                         siTopDigitVal = bit bitsPerDigit -1,
                          siSigned = signedQual x,
-                         siSize = size,
+                         siSize = sizeOf x,
                          siIsOrderReverse = False
                          }
   where
-    topDigitVal = bit bitsPerDigit -1
-    topDigit = (sizeOf x) `div` bitsPerDigit - 1
-    size = sizeOf x
     bitsPerDigit = case sortType of
                         ST_LSD -> 8
                         ST_MSD -> 4
