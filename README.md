@@ -50,7 +50,7 @@ You can sort lists of RadixRep instances (Float, Double, IntN, WordN) or, record
 
 Performance:
 
-It uses
+It uses:
 
 * The __vector__ library to implement vectors
 * The __Data.Sequence__ module to implement queues with constant O(1) access to both ends
