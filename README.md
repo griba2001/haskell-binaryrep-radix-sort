@@ -89,6 +89,7 @@ Comparison of times sorting a 10000 size list of Floats (replicated 5 times)
 1. lsdSort time: 0.413432s; ratio vs min. time: x31.237778617302s
 1. Data.List.sort time: 0.013235s; ratio vs min. time: x1s
 
+----------
 
 Comparison of times sorting a 10000 size list of Int32 (replicated 5 times)
 
