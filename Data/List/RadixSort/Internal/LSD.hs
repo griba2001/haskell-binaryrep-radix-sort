@@ -22,7 +22,8 @@ import Data.STRef.Strict (newSTRef, readSTRef, writeSTRef)
 lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> DList a
 lsdRadixSort _indexMap _sortInfo _digitsConstancy [] = D.empty
 lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
-lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ runST $ do
+lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
+        assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ runST $ do
         
         vecIni <- V.thaw emptyVecOfSeqs
         -- partition by digit 0

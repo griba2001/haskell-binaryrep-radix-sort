@@ -71,7 +71,8 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
   where
           
 #ifdef DEBUG
-    digitsToSkip' = trace ("msdSort digitsToSkip: " ++ show digit ++ show digitsConstancy ++ show digitsToSkip) digitsToSkip
+    digitsToSkip' = trace ("msdSort digitsToSkip: " ++ show digit
+                           ++ show digitsConstancy ++ show digitsToSkip) digitsToSkip
 #else
     digitsToSkip' = digitsToSkip 
 #endif
@@ -84,7 +85,8 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
 msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] ->  DList a
 msdRadixSort _indexMap _sortInfo _digitsConstancy [] = D.empty
 msdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
-msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) = assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ 
+msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
+        assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ 
   if nextDigit >= 0
                     then sortByDigit indexMap sortInfo digitsConstancy nextDigit $ S.fromList list
                     else D.fromList list
