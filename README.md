@@ -56,7 +56,7 @@ It uses:
 * The __Data.Sequence__ module to implement queues with constant O(1) access to both ends
 * The __dlist__ package (difference lists) that have O(1) append costs to collect ordered sequences.
 
-Actually both MSD and LSD methods run much slower than Data.List.sort (the test includes a benchmark).
+Actually both MSD and LSD methods __RUN MUCH SLOWER__ than Data.List.sort (the test includes a benchmark).
 
 
 Comparison of times sorting a 10000 size list of Floats (replicated 5 times)
