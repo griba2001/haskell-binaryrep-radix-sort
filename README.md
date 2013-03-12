@@ -61,33 +61,33 @@ Actually both MSD and LSD methods run much slower than Data.List.sort (the test 
 
 Comparison of times sorting a 10000 size list of Floats (replicated 5 times)
 
-1. msdSort time: 0.238941s; ratio vs min. time: x13.200430915419s
-2. lsdSort time: 0.436473s; ratio vs min. time: x24.113198165847s
-3. Data.List.sort time: 0.018101s; ratio vs min. time: x1s
+1. msdSort time: 0.227957s; ratio vs min. time: x16.005968262884s
+1. lsdSort time: 0.36944s; ratio vs min. time: x25.94017694144s
+1. Data.List.sort time: 0.014242s; ratio vs min. time: x1s
 
-----------
+-----------
 
-1. msdSort time: 0.336847s; ratio vs min. time: x25.565194292653s
-1. lsdSort time: 0.676234s; ratio vs min. time: x51.323163327261s
-1. Data.List.sort time: 0.013176s; ratio vs min. time: x1s
+1. msdSort time: 0.249989s; ratio vs min. time: x17.004897626011s
+1. lsdSort time: 0.396428s; ratio vs min. time: x26.966056730834s
+1. Data.List.sort time: 0.014701s; ratio vs min. time: x1s
 
-----------
+-----------
 
-1. msdSort time: 0.404574s; ratio vs min. time: x34.727381974248s
-1. lsdSort time: 0.4368s; ratio vs min. time: x37.493562231759s
-1. Data.List.sort time: 0.01165s; ratio vs min. time: x1s
+1. msdSort time: 0.214817s; ratio vs min. time: x15.400172055344s
+1. lsdSort time: 0.397558s; ratio vs min. time: x28.500824431858s
+1. Data.List.sort time: 0.013949s; ratio vs min. time: x1s
 
-----------
+-----------
 
-1. msdSort time: 0.23087s; ratio vs min. time: x15.643718661065s
-1. lsdSort time: 0.395681s; ratio vs min. time: x26.811288792519s
-1. Data.List.sort time: 0.014758s; ratio vs min. time: x1s
+1. msdSort time: 0.213596s; ratio vs min. time: x13.821405461369s
+1. lsdSort time: 0.377318s; ratio vs min. time: x24.415555843147s
+1. Data.List.sort time: 0.015454s; ratio vs min. time: x1s
 
-----------
+-----------
 
-1. msdSort time: 0.247786s; ratio vs min. time: x18.722024933887s
-1. lsdSort time: 0.413432s; ratio vs min. time: x31.237778617302s
-1. Data.List.sort time: 0.013235s; ratio vs min. time: x1s
+1. msdSort time: 0.257411s; ratio vs min. time: x12.765869867089s
+1. lsdSort time: 0.423192s; ratio vs min. time: x20.987502479666s
+1. Data.List.sort time: 0.020164s; ratio vs min. time: x1s
 
 ----------
 

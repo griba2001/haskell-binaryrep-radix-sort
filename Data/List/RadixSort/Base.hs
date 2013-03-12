@@ -85,29 +85,26 @@ lsdSortBy indexMap list@(x:_) = case repType $ indexMap x of
 msdSortFloats :: (RadixRep b) => (a -> b) -> [a] -> [a]
 msdSortFloats _indexMap [] = []
 msdSortFloats _indexMap [x] = [x]
-msdSortFloats indexMap list@(x:_) = D.toList $ D.concat [(sortedNegs `using` rpar), (sortedPoss `using` rseq)]
+msdSortFloats indexMap list@(x:_) = prependReversing (sortedNegs `using` rpar) (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
     sortInfo = getSortInfo ST_MSD $ indexMap x
-    sortedPoss = msdRadixSort indexMap sortInfo digitsConstPos poss
-    sortedNegs = negs .$ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg
-                      .$ D.toList
-                      .$ L.reverse
-                      .$ D.fromList
+    sortedPoss = D.toList $ msdRadixSort indexMap sortInfo digitsConstPos poss
+    sortedNegs = D.toList $ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg negs
+
+prependReversing :: [a] -> [a] -> [a]
+prependReversing negs poss = L.foldl' (flip (:)) poss negs
 
 
 lsdSortFloats :: (RadixRep b) => (a -> b) -> [a] -> [a]
 lsdSortFloats _indexMap [] = []
 lsdSortFloats _indexMap [x] = [x]
-lsdSortFloats indexMap list@(x:_) = D.toList $ D.concat [(sortedNegs `using` rpar), (sortedPoss `using` rseq)]
+lsdSortFloats indexMap list@(x:_) = prependReversing (sortedNegs `using` rpar) (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
     sortInfo = getSortInfo ST_MSD $ indexMap x
-    sortedPoss = lsdRadixSort indexMap sortInfo digitsConstPos poss
-    sortedNegs = negs .$ lsdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg
-                      .$ D.toList
-                      .$ L.reverse
-                      .$ D.fromList
+    sortedPoss = D.toList $ lsdRadixSort indexMap sortInfo digitsConstPos poss
+    sortedNegs = D.toList $ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg negs
 
 ----------------------------------
                       
