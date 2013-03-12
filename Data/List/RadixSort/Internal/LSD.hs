@@ -46,7 +46,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
 
                 M.forM_ [0..siTopDigitVal] $ \digitVal -> do
                     -- read vecFrom queue
-                    s <- VM.read vecFrom digitVal
+                    s <- VM.unsafeRead vecFrom digitVal
                     -- partition to vecTo queues
                     partSeqByDigit indexMap sortInfo digit vecTo s
 

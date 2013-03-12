@@ -33,12 +33,13 @@ partListByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' list = do
     partListByDigitR _bitsToShift _sortInfo _digit _vec []  = return ()
     partListByDigitR bitsToShift sortInfo digit vec (x:xs) = do
             
-        s <- VM.read vec digitVal
-        VM.write vec digitVal (s S.|> x)
+        s <- VM.unsafeRead vec digitVal
+        VM.unsafeWrite vec digitVal (s S.|> x)
         
         partListByDigitR bitsToShift sortInfo digit vec xs
       where
         digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
+{-# INLINABLE partListByDigit #-}
         
 ------------------------------------------
 
@@ -51,12 +52,13 @@ partSeqByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' sq = do
     partSeqByDigitR _bitsToShift _sortInfo _digit _vec S.EmptyL  = return ()
     partSeqByDigitR bitsToShift sortInfo digit vec (x S.:< xs) = do
             
-        s <- VM.read vec digitVal
-        VM.write vec digitVal (s S.|> x)
+        s <- VM.unsafeRead vec digitVal
+        VM.unsafeWrite vec digitVal (s S.|> x)
         
         partSeqByDigitR bitsToShift sortInfo digit vec (S.viewl xs)
       where
         digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
+{-# INLINABLE partSeqByDigit #-}
         
 ------------------------------------------
 
@@ -68,13 +70,14 @@ collectVecToDList n dl vec =
       where
         new_accum_dl = dln `D.append` dl
         dln = D.fromList $ F.toList $ vec V.! n
+{-# INLINABLE collectVecToDList #-}
 
 ------------------------------------------
 
 xor :: Bool -> Bool -> Bool
-xor False False = False
 xor False True = True
 xor True False = True
-xor True True = False
+xor _ _ = False
+{-# INLINABLE xor #-}
 
 

@@ -29,7 +29,7 @@ getSortInfo sortType x = SortInfo {
     bitsPerDigit = case sortType of
                         ST_LSD -> 8
                         ST_MSD -> 4
-
+{-# INLINABLE getSortInfo #-}
 ------------------------------------------
 
 isNeg ::  (RadixRep a) => a -> Bool
@@ -42,6 +42,7 @@ isNeg y = if repType y == RT_WordN
                         16 -> testBit (toWordRep y :: Word16) (s-1)
                         8 ->  testBit (toWordRep y :: Word8) (s-1)
                         other -> error $ printf "size %d not supported!" other
+{-# INLINABLE isNeg #-}
 
 ------------------------------------------
 
@@ -54,6 +55,7 @@ getDigitVal sortInfo x digit bitsToShift =
                         16 -> wordGetDigitVal sortInfo (toWordRep x :: Word16) (digit, bitsToShift)
                         8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) (digit, bitsToShift)
                         other -> error $ printf "size %d not supported!" other
+{-# INLINABLE getDigitVal #-}
 
 ------------------------------------------
 
@@ -66,6 +68,7 @@ getAllDigitVals sortInfo x =
                         16 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word16)
                         8 -> wordGetAllDigitVal sortInfo (toWordRep x :: Word8)
                         other -> error $ printf "size %d not supported!" other
+{-# INLINABLE getAllDigitVals #-}
                         
 ------------------------------------------
 
@@ -76,6 +79,7 @@ wordGetAllDigitVal sortInfo @ SortInfo {..} x =
   where
     digitList = [0..siTopDigit]
     bitsToShiftList = [0,siDigitSize..(siSize-siDigitSize)]
+{-# INLINABLE wordGetAllDigitVal #-}
 
 ------------------------------------------
 
@@ -90,3 +94,4 @@ wordGetDigitVal SortInfo {..} bits (digit, bitsToShift) =
 
       digitMask = bit siDigitSize -1
       digitMaskSignExcl = (bit (siDigitSize-1) -1)    -- sign excluded
+{-# INLINABLE wordGetDigitVal #-}

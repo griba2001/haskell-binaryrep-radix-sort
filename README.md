@@ -58,70 +58,72 @@ It uses:
 
 Actually both MSD and LSD methods __run much slower__ than Data.List.sort (the test includes a benchmark).
 
+Benchmarks replicated 5 times:
 
-Comparison of times sorting a 10000 size list of Floats (replicated 5 times)
+Comparison of times sorting a 10000 size list of Floats ^
 
-1. msdSort time: 0.227957s; ratio vs min. time: x16.005968262884s
-1. lsdSort time: 0.36944s; ratio vs min. time: x25.94017694144s
-1. Data.List.sort time: 0.014242s; ratio vs min. time: x1s
+1. msdSort time: 0.256787s; ratio vs min. time: x15.696986368359s
+1. lsdSort time: 0.478728s; ratio vs min. time: x29.263891435906s
+1. Data.List.sort time: 0.016359s; ratio vs min. time: x1s
 
------------
+---------
 
-1. msdSort time: 0.249989s; ratio vs min. time: x17.004897626011s
-1. lsdSort time: 0.396428s; ratio vs min. time: x26.966056730834s
-1. Data.List.sort time: 0.014701s; ratio vs min. time: x1s
+1. msdSort time: 0.251979s; ratio vs min. time: x16.070089285714s
+1. lsdSort time: 0.449266s; ratio vs min. time: x28.652168367346s
+1. Data.List.sort time: 0.01568s; ratio vs min. time: x1s
 
------------
+---------
 
-1. msdSort time: 0.214817s; ratio vs min. time: x15.400172055344s
-1. lsdSort time: 0.397558s; ratio vs min. time: x28.500824431858s
-1. Data.List.sort time: 0.013949s; ratio vs min. time: x1s
+1. msdSort time: 0.238799s; ratio vs min. time: x21.069260631727s
+1. lsdSort time: 0.441168s; ratio vs min. time: x38.924298570672s
+1. Data.List.sort time: 0.011334s; ratio vs min. time: x1s
 
------------
+---------
 
-1. msdSort time: 0.213596s; ratio vs min. time: x13.821405461369s
-1. lsdSort time: 0.377318s; ratio vs min. time: x24.415555843147s
-1. Data.List.sort time: 0.015454s; ratio vs min. time: x1s
+1. msdSort time: 0.263264s; ratio vs min. time: x17.541577825159s
+1. lsdSort time: 0.430236s; ratio vs min. time: x28.6671108742s
+1. Data.List.sort time: 0.015008s; ratio vs min. time: x1s
 
------------
+---------
 
-1. msdSort time: 0.257411s; ratio vs min. time: x12.765869867089s
-1. lsdSort time: 0.423192s; ratio vs min. time: x20.987502479666s
-1. Data.List.sort time: 0.020164s; ratio vs min. time: x1s
+1. msdSort time: 0.256446s; ratio vs min. time: x12.48337633257s
+1. lsdSort time: 0.460808s; ratio vs min. time: x22.431387820668s
+1. Data.List.sort time: 0.020543s; ratio vs min. time: x1s
 
-----------
 
-Comparison of times sorting a 10000 size list of Int32 (replicated 5 times)
+---------
 
-1. msdSort time: 0.29914s; ratio vs min. time: x28.098816456885s
-1. lsdSort time: 0.211813s; ratio vs min. time: x19.896017283486s
-1. Data.List.sort time: 0.018008s; ratio vs min. time: x1.69152733421s
-1. Data.Vector.Algorithms.Radix.sort time: 0.010646s; ratio vs min. time: x1s
+Comparison of times sorting a 10000 size list of Int32
 
----------------
+1. msdSort time: 0.215055s; ratio vs min. time: x29.761278715748s
+1. lsdSort time: 0.124551s; ratio vs min. time: x17.236507057846s
+1. Data.List.sort time: 0.012339s; ratio vs min. time: x1.707583725435s
+1. Data.Vector.Algorithms.Radix.sort time: 0.007226s; ratio vs min. time: x1s
 
-1. msdSort time: 0.303674s; ratio vs min. time: x28.781537295043s
-1. lsdSort time: 0.205365s; ratio vs min. time: x19.464031845322s
-1. Data.List.sort time: 0.022134s; ratio vs min. time: x2.097810634063s
-1. Data.Vector.Algorithms.Radix.sort time: 0.010551s; ratio vs min. time: x1s
+---------
 
----------------
+1. msdSort time: 0.206555s; ratio vs min. time: x21.669639110365s
+1. lsdSort time: 0.135591s; ratio vs min. time: x14.224821653378s
+1. Data.List.sort time: 0.010211s; ratio vs min. time: x1.071233738984s
+1. Data.Vector.Algorithms.Radix.sort time: 0.009532s; ratio vs min. time: x1s
 
-1. msdSort time: 0.323617s; ratio vs min. time: x32.961601140761s
-1. lsdSort time: 0.15866s; ratio vs min. time: x16.160114076186s
-1. Data.List.sort time: 0.018238s; ratio vs min. time: x1.857608474231s
-1. Data.Vector.Algorithms.Radix.sort time: 0.009818s; ratio vs min. time: x1s
+---------
 
----------------
+1. msdSort time: 0.257523s; ratio vs min. time: x25.451966791856s
+1. lsdSort time: 0.163541s; ratio vs min. time: x16.163372207946s
+1. Data.List.sort time: 0.018911s; ratio vs min. time: x1.869045265862s
+1. Data.Vector.Algorithms.Radix.sort time: 0.010118s; ratio vs min. time: x1s
 
-1. msdSort time: 0.206807s; ratio vs min. time: x28.895766382562s
-1. lsdSort time: 0.116238s; ratio vs min. time: x16.241162498253s
-1. Data.List.sort time: 0.009274s; ratio vs min. time: x1.295794327232s
-1. Data.Vector.Algorithms.Radix.sort time: 0.007157s; ratio vs min. time: x1s
+---------
 
----------------
+1. msdSort time: 0.366789s; ratio vs min. time: x40.279925323962s
+1. lsdSort time: 0.207427s; ratio vs min. time: x22.779156600043s
+1. Data.List.sort time: 0.014807s; ratio vs min. time: x1.6260707226s
+1. Data.Vector.Algorithms.Radix.sort time: 0.009106s; ratio vs min. time: x1s
 
-1. msdSort time: 0.193588s; ratio vs min. time: x26.705476617464s
-1. lsdSort time: 0.110426s; ratio vs min. time: x15.233273554973s
-1. Data.List.sort time: 0.012184s; ratio vs min. time: x1.680783556352s
-1. Data.Vector.Algorithms.Radix.sort time: 0.007249s; ratio vs min. time: x1s
+---------
+
+1. msdSort time: 0.347061s; ratio vs min. time: x32.475063160849s
+1. lsdSort time: 0.184119s; ratio vs min. time: x17.22831477496s
+1. Data.List.sort time: 0.01939s; ratio vs min. time: x1.814353887901s
+1. Data.Vector.Algorithms.Radix.sort time: 0.010687s; ratio vs min. time: x1s

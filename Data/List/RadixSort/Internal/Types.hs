@@ -34,7 +34,12 @@ cast x = newArray (0 :: Int, 0) x >>= castSTUArray >>= flip readArray 0
 
 -----------------------------------------------------------------
 
-data SortInfo = SortInfo {siDigitSize:: !Int, siTopDigit:: !Int, siTopDigitVal:: !Int, siIsSigned:: !Bool, siSize:: !Int, siIsOrderReverse:: !Bool}
+data SortInfo = SortInfo {siDigitSize:: {-# UNPACK #-} !Int,
+                          siTopDigit:: {-# UNPACK #-} !Int,
+                          siTopDigitVal:: {-# UNPACK #-} !Int,
+                          siIsSigned:: !Bool,
+                          siSize:: {-# UNPACK #-} !Int,
+                          siIsOrderReverse:: !Bool}
 
 data RepType = RT_Float | RT_IntN | RT_WordN deriving Eq
 
@@ -54,35 +59,53 @@ class (Ord t) => RadixRep t where
 
 instance RadixRep Float where
   toWordRep = fromIntegral . floatToWord
+  {-# INLINE toWordRep #-}
   sizeOf _ = 32
+  {-# INLINE sizeOf #-}
   repType _ = RT_Float
+  {-# INLINE repType #-}
 
 instance RadixRep Double where
   toWordRep = fromIntegral . doubleToWord
+  {-# INLINE toWordRep #-}
   sizeOf _ = 64
+  {-# INLINE sizeOf #-}
   repType _ = RT_Float
+  {-# INLINE repType #-}
 
 -------------------------------
 
 instance RadixRep Int8 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 8
+  {-# INLINE sizeOf #-}
   repType _ = RT_IntN
+  {-# INLINE repType #-}
 
 instance RadixRep Int16 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 16
+  {-# INLINE sizeOf #-}
   repType _ = RT_IntN
+  {-# INLINE repType #-}
 
 instance RadixRep Int32 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 32
+  {-# INLINE sizeOf #-}
   repType _ = RT_IntN
+  {-# INLINE repType #-}
 
 instance RadixRep Int64 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 64
+  {-# INLINE sizeOf #-}
   repType _ = RT_IntN
+  {-# INLINE repType #-}
   
 {- Int representation may have bits reserved in compilers other than GHC
 
@@ -96,23 +119,35 @@ instance RadixRep Int where
 
 instance RadixRep Word8 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 8
+  {-# INLINE sizeOf #-}
   repType _ = RT_WordN
+  {-# INLINE repType #-}
 
 instance RadixRep Word16 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 16
+  {-# INLINE sizeOf #-}
   repType _ = RT_WordN
+  {-# INLINE repType #-}
 
 instance RadixRep Word32 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 32
+  {-# INLINE sizeOf #-}
   repType _ = RT_WordN
+  {-# INLINE repType #-}
 
 instance RadixRep Word64 where
   toWordRep = fromIntegral
+  {-# INLINE toWordRep #-}
   sizeOf _ = 64
+  {-# INLINE sizeOf #-}
   repType _ = RT_WordN
+  {-# INLINE repType #-}
 
 {- The Word type may have bits representation restricted to less bits. (GHC sets always the same number of bits as Int)
 

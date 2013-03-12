@@ -79,7 +79,7 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
 
     digitsToSkip = L.length $ L.takeWhile (== True) msdDigitsConstancy    
     msdDigitsConstancy = L.take digit digitsConstancy .$ L.reverse
-
+{-# INLINABLE nextSortableDigit #-}
 ------------------------------------------
        
 msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] ->  DList a
@@ -92,5 +92,5 @@ msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
                     else D.fromList list
   where
     nextDigit = nextSortableDigit digitsConstancy (siTopDigit+1)      
-          
+{-# INLINABLE msdRadixSort #-}          
         

@@ -51,8 +51,8 @@ updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg c
                                    else vecPos V.! digit
                                    
             let digitVal = allDigitVals!!digit
-            dvCnt <- VM.read mvecCounters digitVal
-            VM.write mvecCounters digitVal (dvCnt +1)
+            dvCnt <- VM.unsafeRead mvecCounters digitVal
+            VM.unsafeWrite mvecCounters digitVal (dvCnt +1)
 
         if isNegIndexVal
            then updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg (cntNeg+1) (x:accumNeg) xs

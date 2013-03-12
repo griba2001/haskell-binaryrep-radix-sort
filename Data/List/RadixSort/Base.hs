@@ -94,6 +94,7 @@ msdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) `prependReversing`
 
 prependReversing :: [a] -> [a] -> [a]
 prependReversing negs poss  = L.foldl' (flip (:)) poss negs
+{-# INLINABLE prependReversing #-}
 
 
 lsdSortFloats :: (RadixRep b) => (a -> b) -> [a] -> [a]
