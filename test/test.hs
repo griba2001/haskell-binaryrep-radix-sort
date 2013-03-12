@@ -1,4 +1,5 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns, TransformListComp #-}
+import GHC.Exts (groupWith)  -- (the, groupWith, sortWith)
 import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy, RadixRep)
 
 import Timed -- from test dir.
@@ -158,42 +159,59 @@ main = do
             
         _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
         
-        M.replicateM_ 5  
+        times1 <- M.replicateM 5
              ((M.replicateM len $ getStdRandom randomRFloat) >>= benchmark1)
+             
+        let stats1 = [(avg msdTime, avg lsdTime, avg listTime)
+                     | (grup, msdTime, lsdTime, listTime) <- times1
+                     , then group by grup using groupWith
+                     ]
+                     
+        benchmark1Show $ L.head stats1    
 
         _ <- printf "\n\nComparison of times sorting a %d size list of Int32\n" len
         
-        M.replicateM_ 5
+        times2 <- M.replicateM 5
              ((M.replicateM len $ getStdRandom randomRInt32) >>= benchmark2)
+
+        let stats2 = [(avg msdTime, avg lsdTime, avg listTime, avg vectorTime)
+                     | (grup, msdTime, lsdTime, listTime, vectorTime) <- times2
+                     , then group by grup using groupWith
+                     ]
+                     
+        benchmark2Show $ L.head stats2
         
         putStrLn "-------------------"
         exitSuccess
 
 
-benchmark1 :: (Ord a, RadixRep a) => [a] -> IO ()
+benchmark1 :: (Ord a, RadixRep a) => [a] -> IO (Int, NominalDiffTime, NominalDiffTime, NominalDiffTime)
 benchmark1 list = do
         (t1, _s1) <- timed $ msdSort list
         (t2, _s2) <- timed $ lsdSort list
         (t3, _s3) <- timed $ L.sort list
+        return (1, t1, t2, t3)
 
+benchmark1Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime) -> IO ()
+benchmark1Show (t1, t2, t3) = do
         let tmin = min t1 (min t2 t3)
 
-        putStr "\nmsdSort time: "
+        putStr "\nmsdSort avg time: "
         putTimes t1 tmin
 
-        putStr "lsdSort time: "
+        putStr "lsdSort avg time: "
         putTimes t2 tmin
 
-        putStr "Data.List.sort time: "
+        putStr "Data.List.sort avg time: "
         putTimes t3 tmin
   where
     putTimes t tmin = do
         putStr $ show t
-        putStr "; ratio vs min. time: x"
+        putStr "; ratio vs min. avg time: x"
         putStrLn $ show (t/tmin)
 
 
-benchmark2 :: (Ord a, RadixRep a, VAR.Radix a) => [a] -> IO ()
+benchmark2 :: (Ord a, RadixRep a, VAR.Radix a) => [a] -> IO (Int, NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDiffTime)
 benchmark2 list = do
         (t1, _s1) <- timed $ msdSort list
         (t2, _s2) <- timed $ lsdSort list
@@ -204,24 +222,34 @@ benchmark2 list = do
         ! _res <- V.freeze vec
         endTime <- getCurrentTime
         let t4 = diffUTCTime endTime startTime
+        return (1, t1, t2, t3, t4)
 
+benchmark2Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDiffTime) -> IO ()        
+benchmark2Show (t1, t2, t3, t4) = do
         let tmin = min t1 (min t2 (min t3 t4))
 
-        putStr "\nmsdSort time: "
+        putStr "\nmsdSort avg time: "
         putTimes t1 tmin
 
-        putStr "lsdSort time: "
+        putStr "lsdSort avg time: "
         putTimes t2 tmin
 
-        putStr "Data.List.sort time: "
+        putStr "Data.List.sort avg time: "
         putTimes t3 tmin
 
-        putStr "Data.Vector.Algorithms.Radix.sort time: "
+        putStr "Data.Vector.Algorithms.Radix.sort avg time: "
         putTimes t4 tmin
   where
     putTimes t tmin = do
         putStr $ show t
-        putStr "; ratio vs min. time: x"
+        putStr "; ratio vs min. avg time: x"
         putStrLn $ show (t/tmin)
         
-        
+avg :: (Fractional a, Eq a) => [a] -> a
+avg llista = avg_acum llista 0 0
+  where
+        avg_acum [] recompte suma
+                             | recompte == 0  = 0
+                             | otherwise      = suma / recompte
+
+        avg_acum (x:xs) recompte suma = avg_acum xs (recompte +1) (suma +x)        
