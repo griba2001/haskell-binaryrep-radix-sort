@@ -196,13 +196,13 @@ benchmark1Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime) -> IO ()
 benchmark1Show (t1, t2, t3) = do
         let tmin = min t1 (min t2 t3)
 
-        putStr "\nmsdSort avg time: "
+        putStr "\n1. msdSort avg time: "
         putTimes t1 tmin
 
-        putStr "lsdSort avg time: "
+        putStr "2. lsdSort avg time: "
         putTimes t2 tmin
 
-        putStr "Data.List.sort avg time: "
+        putStr "3. Data.List.sort avg time: "
         putTimes t3 tmin
   where
     putTimes t tmin = do
@@ -228,16 +228,16 @@ benchmark2Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDif
 benchmark2Show (t1, t2, t3, t4) = do
         let tmin = min t1 (min t2 (min t3 t4))
 
-        putStr "\nmsdSort avg time: "
+        putStr "\n1. msdSort avg time: "
         putTimes t1 tmin
 
-        putStr "lsdSort avg time: "
+        putStr "2. lsdSort avg time: "
         putTimes t2 tmin
 
-        putStr "Data.List.sort avg time: "
+        putStr "3. Data.List.sort avg time: "
         putTimes t3 tmin
 
-        putStr "Data.Vector.Algorithms.Radix.sort avg time: "
+        putStr "4. Data.Vector.Algorithms.Radix.sort avg time: "
         putTimes t4 tmin
   where
     putTimes t tmin = do
