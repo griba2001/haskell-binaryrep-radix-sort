@@ -10,7 +10,7 @@ name:                binaryrep-radix-sort
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.6.0.13
+version:             1.6.0.14
 
 -- A short (one-line) description of the package.
 synopsis:            RadixSort of floats, ints and unsigned, based on their binary representation
@@ -92,6 +92,8 @@ Test-Suite test-binaryrep-radix-sort
   Build-Depends:        base
                       , QuickCheck >= 2.4
                       , random >= 1.0.1
+                      , vector >= 0.9
+                      , vector-algorithms
                       , time
                       , binaryrep-radix-sort
   

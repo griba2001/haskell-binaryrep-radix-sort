@@ -1,4 +1,4 @@
-
+{-# LANGUAGE BangPatterns #-}
 import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy, RadixRep)
 
 import Timed -- from test dir.
@@ -13,6 +13,9 @@ import System.Random
 import System.Exit (exitSuccess, exitWith, ExitCode(..))
 import Control.Monad as M
 import Text.Printf
+import qualified Data.Vector as V
+import qualified Data.Vector.Algorithms.Radix as VAR
+import Data.Time.Clock
 
 
 data Rec = Rec {fieldA:: Float} deriving (Eq, Show)
@@ -156,19 +159,19 @@ main = do
         _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
         
         M.replicateM_ 5  
-             ((M.replicateM len $ getStdRandom randomRFloat) >>= benchmark)
+             ((M.replicateM len $ getStdRandom randomRFloat) >>= benchmark1)
 
         _ <- printf "\n\nComparison of times sorting a %d size list of Int32\n" len
         
         M.replicateM_ 5
-             ((M.replicateM len $ getStdRandom randomRInt32) >>= benchmark)
+             ((M.replicateM len $ getStdRandom randomRInt32) >>= benchmark2)
         
         putStrLn "-------------------"
         exitSuccess
 
 
-benchmark :: (Ord a, RadixRep a) => [a] -> IO ()
-benchmark list = do
+benchmark1 :: (Ord a, RadixRep a) => [a] -> IO ()
+benchmark1 list = do
         (t1, _s1) <- timed $ msdSort list
         (t2, _s2) <- timed $ lsdSort list
         (t3, _s3) <- timed $ L.sort list
@@ -188,4 +191,37 @@ benchmark list = do
         putStr $ show t
         putStr "; ratio vs min. time: x"
         putStrLn $ show (t/tmin)
+
+
+benchmark2 :: (Ord a, RadixRep a, VAR.Radix a) => [a] -> IO ()
+benchmark2 list = do
+        (t1, _s1) <- timed $ msdSort list
+        (t2, _s2) <- timed $ lsdSort list
+        (t3, _s3) <- timed $ L.sort list
+        ! vec <- V.thaw $ V.fromList list
+        startTime <- getCurrentTime
+        VAR.sort vec
+        ! res <- V.freeze vec
+        endTime <- getCurrentTime
+        let t4 = diffUTCTime endTime startTime
+
+        let tmin = min t1 (min t2 (min t3 t4))
+
+        putStr "\nmsdSort time: "
+        putTimes t1 tmin
+
+        putStr "lsdSort time: "
+        putTimes t2 tmin
+
+        putStr "Data.List.sort time: "
+        putTimes t3 tmin
+
+        putStr "Data.Vector.Algorithms.Radix.sort time: "
+        putTimes t4 tmin
+  where
+    putTimes t tmin = do
+        putStr $ show t
+        putStr "; ratio vs min. time: x"
+        putStrLn $ show (t/tmin)
+        
         

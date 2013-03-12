@@ -66,7 +66,7 @@ msdSortBy indexMap list@(x:_) = case repType $ indexMap x of
 
 
 -- | A first pass to build digit counters is used to split lists by sign, then they are sorted in parallel
--- 
+--
 -- Worst case O((k+1) n + length negatives (append)) where k= #digits.
 
 lsdSort :: (RadixRep a) => [a] -> [a]
