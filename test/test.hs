@@ -201,7 +201,7 @@ benchmark2 list = do
         ! vec <- V.thaw $ V.fromList list
         startTime <- getCurrentTime
         VAR.sort vec
-        ! res <- V.freeze vec
+        ! _res <- V.freeze vec
         endTime <- getCurrentTime
         let t4 = diffUTCTime endTime startTime
 
