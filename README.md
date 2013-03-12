@@ -22,8 +22,13 @@ or
 
 You can sort lists of RadixRep instances (Float, Double, IntN, WordN) or, records with a mapping function to the types mentioned
 
-Actually both MSD and LSD methods run much slower than Data.List.sort (run the tests).
+It uses
 
+* The *vector* library to implement vectors
+* The Data.Sequence module to implement queues with constant O(1) access to both ends
+* The *dlist* package (difference lists) that have O(1) append costs to collect ordered sequences.
+
+Actually both MSD and LSD methods run much slower than Data.List.sort (run the tests).
 
 ```haskell
     import Data.List.RadixSort.Base (msdSort, msdSortBy)
