@@ -24,9 +24,9 @@ You can sort lists of RadixRep instances (Float, Double, IntN, WordN) or, record
 
 It uses
 
-* The *vector* library to implement vectors
-* The Data.Sequence module to implement queues with constant O(1) access to both ends
-* The *dlist* package (difference lists) that have O(1) append costs to collect ordered sequences.
+* The __vector__ library to implement vectors
+* The __Data.Sequence__ module to implement queues with constant O(1) access to both ends
+* The __dlist__ package (difference lists) that have O(1) append costs to collect ordered sequences.
 
 Actually both MSD and LSD methods run much slower than Data.List.sort (run the tests).
 
