@@ -1,4 +1,4 @@
-## Radix sort of numbers and numerically indexed data types, based on binary representation of primitive types
+## Radix sort of numbers and numerically indexed data types, based on binary representation of primitive types, and made with the structures Data.Vector, Data.Vector-Mutable, Data.Sequence as queues collected with Data.DList''s (difference lists) for O(1) on appends.
 
 With msd prefix you have parallel Most significant digit radix sort.
 

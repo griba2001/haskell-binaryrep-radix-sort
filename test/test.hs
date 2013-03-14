@@ -150,7 +150,7 @@ main = do
         putStrLn "sorting by lsd first [Word64]"
         deepCheck ((\s -> let sorted = lsdSort s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
 
-        putStrLn "-------------------"
+        putStrLn "\n-------------------"
         
         let len = 10000 :: Int
             (loExp, hiExp) = floatRange (1::Float)
@@ -181,7 +181,7 @@ main = do
                      
         benchmark2Show $ L.head stats2
         
-        putStrLn "-------------------"
+        putStrLn "\n-------------------"
         exitSuccess
 
 
