@@ -59,6 +59,6 @@ updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg c
            else updateCounters indexMap sortInfo vecPos (cntPos+1) (x:accumPos) vecNeg cntNeg accumNeg xs
   where
         ! allDigitVals = getAllDigitVals sortInfo indexVal
-        ! indexVal = indexMap x
-        ! isNegIndexVal = isNeg indexVal
+        indexVal = indexMap x
+        isNegIndexVal = isNeg indexVal
   
