@@ -11,3 +11,11 @@ timed expr = do
     endTime <- getCurrentTime
     let elapsed = diffUTCTime endTime startTime
     return (elapsed, res)
+
+timedIO :: IO a -> IO (NominalDiffTime, a)
+timedIO io = do
+    startTime <- getCurrentTime
+    ! res <- io
+    endTime <- getCurrentTime
+    let elapsed = diffUTCTime endTime startTime
+    return (elapsed, res)    

@@ -216,12 +216,12 @@ benchmark2 list = do
         (t1, _s1) <- timed $ msdSort list
         (t2, _s2) <- timed $ lsdSort list
         (t3, _s3) <- timed $ L.sort list
-        ! vec <- V.thaw $ V.fromList list
-        startTime <- getCurrentTime
-        VAR.sort vec
-        ! _res <- V.freeze vec
-        endTime <- getCurrentTime
-        let t4 = diffUTCTime endTime startTime
+        
+        let ! v1 = V.fromList list
+        (t4, _s4) <- timedIO $ do
+                vec <- V.unsafeThaw v1
+                VAR.sort vec
+                V.unsafeFreeze vec
         return (1, t1, t2, t3, t4)
 
 benchmark2Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDiffTime) -> IO ()        

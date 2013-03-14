@@ -25,7 +25,7 @@ lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
 lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ runST $ do
         
-        vecIni <- V.thaw emptyVecOfSeqs
+        vecIni <- V.unsafeThaw $ V.replicate (siTopDigitVal+1) S.empty
         -- partition by digit 0
         let digit' = 0
         if not $ digitsConstancy!!digit'
@@ -42,7 +42,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
              M.when ( not $ digitsConstancy!!digit)
                 (do  -- sort by digit
                 vecFrom <- readSTRef refVecFrom
-                vecTo <- V.thaw emptyVecOfSeqs
+                vecTo <- V.thaw $ V.replicate (siTopDigitVal+1) S.empty
 
                 M.forM_ [0..siTopDigitVal] $ \digitVal -> do
                     -- read vecFrom queue
@@ -53,10 +53,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
                 writeSTRef refVecFrom vecTo
                 )
 
-        readSTRef refVecFrom >>= V.freeze >>= (\vec ->
+        readSTRef refVecFrom >>= V.unsafeFreeze >>= (\vec ->
                         return $ collectVecToDList siTopDigitVal D.empty vec)
-  where
-
-    emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty
 
 ------------------------------------------

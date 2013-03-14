@@ -58,19 +58,69 @@ It uses:
 
 Actually both MSD and LSD methods __run much slower__ than Data.List.sort (the test includes a benchmark).
 
-Benchmarks replicated 5 times:
+Test output:
+
+Test suite test-binaryrep-radix-sort: RUNNING...
+sorting by msd first [Float]
++++ OK, passed 200 tests.
+sorting by msd first [Double]
++++ OK, passed 200 tests.
+sorting by msd first [Rec Float]
++++ OK, passed 200 tests.
+sorting by msd first [Int8]
++++ OK, passed 200 tests.
+sorting by msd first [Int16]
++++ OK, passed 200 tests.
+sorting by msd first [Int32]
++++ OK, passed 200 tests.
+sorting by msd first [Int64]
++++ OK, passed 200 tests.
+sorting by msd first [Word8]
++++ OK, passed 200 tests.
+sorting by msd first [Word16]
++++ OK, passed 200 tests.
+sorting by msd first [Word32]
++++ OK, passed 200 tests.
+sorting by msd first [Word64]
++++ OK, passed 200 tests.
+
+
+sorting by lsd first [Float]
++++ OK, passed 200 tests.
+sorting by lsd first [Double]
++++ OK, passed 200 tests.
+sorting by lsd first [Rec Float]
++++ OK, passed 200 tests.
+sorting by lsd first [Int8]
++++ OK, passed 200 tests.
+sorting by lsd first [Int16]
++++ OK, passed 200 tests.
+sorting by lsd first [Int32]
++++ OK, passed 200 tests.
+sorting by lsd first [Int64]
++++ OK, passed 200 tests.
+sorting by lsd first [Word8]
++++ OK, passed 200 tests.
+sorting by lsd first [Word16]
++++ OK, passed 200 tests.
+sorting by lsd first [Word32]
++++ OK, passed 200 tests.
+sorting by lsd first [Word64]
++++ OK, passed 200 tests.
+-------------------
 
 Comparison of times sorting a 10000 size list of Floats
 
-1. msdSort avg time: 0.2775178s; ratio vs min. avg time: x21.137127363017s
-1. lsdSort avg time: 0.4755636s; ratio vs min. avg time: x36.221274391822s
-1. Data.List.sort avg time: 0.0131294s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.286683s; ratio vs min. avg time: x13.420860446608s
+2. lsdSort avg time: 0.510584s; ratio vs min. avg time: x23.902626281541s
+3. Data.List.sort avg time: 0.021361s; ratio vs min. avg time: x1s
 
------
 
 Comparison of times sorting a 10000 size list of Int32
 
-1. msdSort avg time: 0.2856298s; ratio vs min. avg time: x31.037945797926s
-1. lsdSort avg time: 0.1887304s; ratio vs min. avg time: x20.508378067068s
-1. Data.List.sort avg time: 0.017794s; ratio vs min. avg time: x1.933583987134s
-1. Data.Vector.Algorithms.Radix.sort avg time: 0.0092026s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.2006304s; ratio vs min. avg time: x25.416844025539s
+2. lsdSort avg time: 0.1276496s; ratio vs min. avg time: x16.171277997364s
+3. Data.List.sort avg time: 0.0121444s; ratio vs min. avg time: x1.538512212425s
+4. Data.Vector.Algorithms.Radix.sort avg time: 0.0078936s; ratio vs min. avg time: x1s
+-------------------
+Test suite test-binaryrep-radix-sort: PASS

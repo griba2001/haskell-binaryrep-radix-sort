@@ -1,4 +1,4 @@
-{-# LANGUAGE PackageImports, CPP, RecordWildCards #-}
+{-# LANGUAGE PackageImports, CPP, RecordWildCards, BangPatterns #-}
 -- | Most significant digit radix sort
 module Data.List.RadixSort.Internal.MSD (msdRadixSort) where
 
@@ -30,10 +30,10 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
         if S.null xs
            then D.singleton x
            else runST $ do
-                mvec <- V.thaw emptyVecOfSeqs
+                mvec <- V.unsafeThaw emptyVecOfSeqs
                 -- partition by digit
                 partSeqByDigit indexMap sortInfo digit mvec sq
-                vec <- V.freeze mvec
+                vec <- V.unsafeFreeze mvec
                 let nextDigit = nextSortableDigit digitsConstancy digit
                 if digit == 0 || nextDigit < 0
                 then do
@@ -45,7 +45,7 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
 
                         return $ D.concat dlists
   where
-    emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty
+    ! emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty
     
     recSort nextDigit sq' =
             case S.viewl sq' of
