@@ -107,6 +107,7 @@ sorting by lsd first [Word32]
 +++ OK, passed 200 tests.
 sorting by lsd first [Word64]
 +++ OK, passed 200 tests.
+
 -------------------
 
 Comparison of times sorting a 10000 size list of Floats
@@ -122,5 +123,6 @@ Comparison of times sorting a 10000 size list of Int32
 2. lsdSort avg time: 0.1276496s; ratio vs min. avg time: x16.171277997364s
 3. Data.List.sort avg time: 0.0121444s; ratio vs min. avg time: x1.538512212425s
 4. Data.Vector.Algorithms.Radix.sort avg time: 0.0078936s; ratio vs min. avg time: x1s
+
 -------------------
 Test suite test-binaryrep-radix-sort: PASS
