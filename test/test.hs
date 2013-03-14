@@ -204,8 +204,9 @@ benchmark1Show (t1, t2, t3) = do
 
         putStr "3. Data.List.sort avg time: "
         putTimes t3 tmin
-  where
-    putTimes t tmin = do
+
+putTimes :: NominalDiffTime -> NominalDiffTime -> IO ()
+putTimes t tmin = do
         putStr $ show t
         putStr "; ratio vs min. avg time: x"
         putStrLn $ show (t/tmin)
@@ -239,11 +240,6 @@ benchmark2Show (t1, t2, t3, t4) = do
 
         putStr "4. Data.Vector.Algorithms.Radix.sort avg time: "
         putTimes t4 tmin
-  where
-    putTimes t tmin = do
-        putStr $ show t
-        putStr "; ratio vs min. avg time: x"
-        putStrLn $ show (t/tmin)
         
 avg :: (Fractional a, Eq a) => [a] -> a
 avg llista = avg_acum llista 0 0
