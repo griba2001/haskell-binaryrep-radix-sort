@@ -112,17 +112,17 @@ sorting by lsd first [Word64]
 
 Comparison of times sorting a 10000 size list of Floats
 
-1. msdSort avg time: 0.286683s; ratio vs min. avg time: x13.420860446608s
-2. lsdSort avg time: 0.510584s; ratio vs min. avg time: x23.902626281541s
-3. Data.List.sort avg time: 0.021361s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.2600552s; ratio vs min. avg time: x21.407948895255s
+2. lsdSort avg time: 0.4340704s; ratio vs min. avg time: x35.733017221508s
+3. Data.List.sort avg time: 0.0121476s; ratio vs min. avg time: x1s
 
 
 Comparison of times sorting a 10000 size list of Int32
 
-1. msdSort avg time: 0.2006304s; ratio vs min. avg time: x25.416844025539s
-2. lsdSort avg time: 0.1276496s; ratio vs min. avg time: x16.171277997364s
-3. Data.List.sort avg time: 0.0121444s; ratio vs min. avg time: x1.538512212425s
-4. Data.Vector.Algorithms.Radix.sort avg time: 0.0078936s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.2299592s; ratio vs min. avg time: x27.15818314949s
+2. lsdSort avg time: 0.1521566s; ratio vs min. avg time: x17.969695538181s
+3. Data.List.sort avg time: 0.0163558s; ratio vs min. avg time: x1.931620095897s
+4. Data.Vector.Algorithms.Radix.sort avg time: 0.0084674s; ratio vs min. avg time: x1s
 
 -------------------
 Test suite test-binaryrep-radix-sort: PASS

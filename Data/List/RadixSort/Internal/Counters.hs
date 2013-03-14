@@ -26,12 +26,12 @@ countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
     
     digitsConstPos <- M.forM [0..siTopDigit] $ \digit -> do
             let mvecCounters = vecPos V.! digit
-            vecCounters <- V.freeze mvecCounters
+            vecCounters <- V.unsafeFreeze mvecCounters
             return $ V.any (== lenPos) vecCounters
 
     digitsConstNeg <- M.forM [0..siTopDigit] $ \digit -> do
             let mvecCounters = vecNeg V.! digit
-            vecCounters <- V.freeze mvecCounters
+            vecCounters <- V.unsafeFreeze mvecCounters
             return $ V.any (== lenNeg) vecCounters
 
     return (poss, digitsConstPos, negs, digitsConstNeg)
