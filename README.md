@@ -10,13 +10,14 @@ The Int and Word types are not supported as [its binary representation may vary]
 
 The flag --enable-tests builds the QuickCheck test-suite at (test/test.hs)
 
-    cabal install --enable-tests
+    cabal install --enable-tests --enable-benchmarks
 
 or
 
-    cabal configure --enable-tests
+    cabal configure --enable-tests --enable-benchmarks
     cabal build
     cabal test
+    cabal bench
     cabal haddock
     ...
 
@@ -58,7 +59,7 @@ It uses:
 
 Actually both MSD and LSD methods __run much slower__ than Data.List.sort (the test includes a benchmark).
 
-Test output:
+$ cabal test
 
 Test suite test-binaryrep-radix-sort: RUNNING...
 sorting by msd first [Float]
@@ -85,6 +86,7 @@ sorting by msd first [Word64]
 +++ OK, passed 200 tests.
 
 
+-------------------
 sorting by lsd first [Float]
 +++ OK, passed 200 tests.
 sorting by lsd first [Double]
@@ -109,20 +111,27 @@ sorting by lsd first [Word64]
 +++ OK, passed 200 tests.
 
 -------------------
+Test suite test-binaryrep-radix-sort: PASS
+
+-------------------
+
+$ cabal bench
+Running 1 benchmarks...
+Benchmark bench-binaryrep-radix-sort: RUNNING...
 
 Comparison of times sorting a 10000 size list of Floats
 
-1. msdSort avg time: 0.2600552s; ratio vs min. avg time: x21.407948895255s
-2. lsdSort avg time: 0.4340704s; ratio vs min. avg time: x35.733017221508s
-3. Data.List.sort avg time: 0.0121476s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.2693208s; ratio vs min. avg time: x18.501882333544s
+2. lsdSort avg time: 0.4791128s; ratio vs min. avg time: x32.914237036629s
+3. Data.List.sort avg time: 0.0145564s; ratio vs min. avg time: x1s
 
 
 Comparison of times sorting a 10000 size list of Int32
 
-1. msdSort avg time: 0.2299592s; ratio vs min. avg time: x27.15818314949s
-2. lsdSort avg time: 0.1521566s; ratio vs min. avg time: x17.969695538181s
-3. Data.List.sort avg time: 0.0163558s; ratio vs min. avg time: x1.931620095897s
-4. Data.Vector.Algorithms.Radix.sort avg time: 0.0084674s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.241322s; ratio vs min. avg time: x31.475414112429s
+2. lsdSort avg time: 0.1482322s; ratio vs min. avg time: x19.333794182861s
+3. Data.List.sort avg time: 0.0119534s; ratio vs min. avg time: x1.559071344724s
+4. Data.Vector.Algorithms.Radix.sort avg time: 0.007667s; ratio vs min. avg time: x1s
 
 -------------------
-Test suite test-binaryrep-radix-sort: PASS
+Benchmark bench-binaryrep-radix-sort: FINISH

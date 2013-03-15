@@ -10,7 +10,7 @@ name:                binaryrep-radix-sort
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.6.0.18
+version:             1.6.0.19
 
 -- A short (one-line) description of the package.
 synopsis:            RadixSort of floats, ints and unsigned, based on their binary representation
@@ -88,12 +88,23 @@ Test-Suite test-binaryrep-radix-sort
   Hs-Source-Dirs:       test
   Ghc-Options:          -Wall -threaded -O3 -rtsopts -with-rtsopts=-N
   Main-Is:              test.hs
-  Other-modules:        Timed
   Build-Depends:        base
                       , QuickCheck >= 2.4
+                      , random >= 1.0.1
+                      , binaryrep-radix-sort
+
+Benchmark bench-binaryrep-radix-sort
+  Type:                 exitcode-stdio-1.0
+  Default-Language:     Haskell2010
+  Hs-Source-Dirs:       test
+  Ghc-Options:          -Wall -threaded -O3 -rtsopts -with-rtsopts=-N
+  Main-Is:              bench.hs
+  Other-modules:        Timed
+  Build-Depends:        base
                       , random >= 1.0.1
                       , vector >= 0.9
                       , vector-algorithms
                       , time
                       , binaryrep-radix-sort
+
   

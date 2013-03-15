@@ -53,7 +53,6 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
                 writeSTRef refVecFrom vecTo
                 )
 
-        readSTRef refVecFrom >>= V.unsafeFreeze >>= (\vec ->
-                        return $ collectVecToDList siTopDigitVal D.empty vec)
+        readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
 
 ------------------------------------------

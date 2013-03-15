@@ -1,9 +1,6 @@
-{-# LANGUAGE BangPatterns, TransformListComp #-}
-import GHC.Exts (groupWith)  -- (the, groupWith, sortWith)
+{-# LANGUAGE BangPatterns #-}
+
 import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy, RadixRep)
-
-import Timed -- from test dir.
-
 
 import Data.List as L
 import Data.Int
@@ -14,9 +11,6 @@ import System.Random
 import System.Exit (exitSuccess, exitWith, ExitCode(..))
 import Control.Monad as M
 import Text.Printf
-import qualified Data.Vector as V
-import qualified Data.Vector.Algorithms.Radix as VAR
-import Data.Time.Clock
 
 
 data Rec = Rec {fieldA:: Float} deriving (Eq, Show)
@@ -151,101 +145,5 @@ main = do
         deepCheck ((\s -> let sorted = lsdSort s in checkOrdered sorted && (length s == length sorted)) :: [Word64] -> Bool)
 
         putStrLn "\n-------------------"
-        
-        let len = 10000 :: Int
-            (loExp, hiExp) = floatRange (1::Float)
-            randomRFloat = randomR ((2^^(loExp-1))::Float,2^^(hiExp-1))
-            randomRInt32 = randomR ((minBound::Int32),maxBound)
-            
-        _ <- printf "\nComparison of times sorting a %d size list of Floats\n" len
-        
-        times1 <- M.replicateM 5
-             ((M.replicateM len $ getStdRandom randomRFloat) >>= benchmark1)
-             
-        let stats1 = [(avg msdTime, avg lsdTime, avg listTime)
-                     | (grup, msdTime, lsdTime, listTime) <- times1
-                     , then group by grup using groupWith
-                     ]
-                     
-        benchmark1Show $ L.head stats1    
-
-        _ <- printf "\n\nComparison of times sorting a %d size list of Int32\n" len
-        
-        times2 <- M.replicateM 5
-             ((M.replicateM len $ getStdRandom randomRInt32) >>= benchmark2)
-
-        let stats2 = [(avg msdTime, avg lsdTime, avg listTime, avg vectorTime)
-                     | (grup, msdTime, lsdTime, listTime, vectorTime) <- times2
-                     , then group by grup using groupWith
-                     ]
-                     
-        benchmark2Show $ L.head stats2
-        
-        putStrLn "\n-------------------"
         exitSuccess
 
-
-benchmark1 :: (Ord a, RadixRep a) => [a] -> IO (Int, NominalDiffTime, NominalDiffTime, NominalDiffTime)
-benchmark1 list = do
-        (t1, _s1) <- timed $ msdSort list
-        (t2, _s2) <- timed $ lsdSort list
-        (t3, _s3) <- timed $ L.sort list
-        return (1, t1, t2, t3)
-
-benchmark1Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime) -> IO ()
-benchmark1Show (t1, t2, t3) = do
-        let tmin = min t1 (min t2 t3)
-
-        putStr "\n1. msdSort avg time: "
-        putTimes t1 tmin
-
-        putStr "2. lsdSort avg time: "
-        putTimes t2 tmin
-
-        putStr "3. Data.List.sort avg time: "
-        putTimes t3 tmin
-
-putTimes :: NominalDiffTime -> NominalDiffTime -> IO ()
-putTimes t tmin = do
-        putStr $ show t
-        putStr "; ratio vs min. avg time: x"
-        putStrLn $ show (t/tmin)
-
-
-benchmark2 :: (Ord a, RadixRep a, VAR.Radix a) => [a] -> IO (Int, NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDiffTime)
-benchmark2 list = do
-        (t1, _s1) <- timed $ msdSort list
-        (t2, _s2) <- timed $ lsdSort list
-        (t3, _s3) <- timed $ L.sort list
-        
-        let ! v1 = V.fromList list
-        (t4, _s4) <- timedIO $ do
-                vec <- V.unsafeThaw v1
-                VAR.sort vec
-                V.unsafeFreeze vec
-        return (1, t1, t2, t3, t4)
-
-benchmark2Show :: (NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDiffTime) -> IO ()        
-benchmark2Show (t1, t2, t3, t4) = do
-        let tmin = min t1 (min t2 (min t3 t4))
-
-        putStr "\n1. msdSort avg time: "
-        putTimes t1 tmin
-
-        putStr "2. lsdSort avg time: "
-        putTimes t2 tmin
-
-        putStr "3. Data.List.sort avg time: "
-        putTimes t3 tmin
-
-        putStr "4. Data.Vector.Algorithms.Radix.sort avg time: "
-        putTimes t4 tmin
-        
-avg :: (Fractional a, Eq a) => [a] -> a
-avg llista = avg_acum llista 0 0
-  where
-        avg_acum [] recompte suma
-                             | recompte == 0  = 0
-                             | otherwise      = suma / recompte
-
-        avg_acum (x:xs) recompte suma = avg_acum xs (recompte +1) (suma +x)        
