@@ -62,6 +62,7 @@ Actually both MSD and LSD methods __run much slower__ than Data.List.sort (the t
 $ cabal test
 
 Test suite test-binaryrep-radix-sort: RUNNING...
+
 sorting by msd first [Float]
 +++ OK, passed 200 tests.
 sorting by msd first [Double]
@@ -116,7 +117,9 @@ Test suite test-binaryrep-radix-sort: PASS
 -------------------
 
 $ cabal bench
+
 Running 1 benchmarks...
+
 Benchmark bench-binaryrep-radix-sort: RUNNING...
 
 Comparison of times sorting a 10000 size list of Floats
