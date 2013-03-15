@@ -47,7 +47,7 @@ main = do
              
         do let (lt1, lt2, lt3) = unzip3 times1
                (t1, t2, t3) = (avg lt1, avg lt2, avg lt3)
-               tmin = min t1 (min t2 t3)
+               tmin = L.minimum [t1, t2, t3]
            benchmark1Show tmin t1 t2 t3
 
         _ <- printf "\n\nComparison of times sorting a %d size list of Int32\n" len
@@ -57,7 +57,7 @@ main = do
 
         do let (lt1, lt2, lt3, lt4) = unzip4 times2
                (t1, t2, t3, t4) = (avg lt1, avg lt2, avg lt3, avg lt4)
-               tmin = min t1 (min t2 (min t3 t4))
+               tmin = L.minimum [t1, t2, t3, t4]
             
            benchmark1Show tmin t1 t2 t3
            benchmark2Show tmin t4
