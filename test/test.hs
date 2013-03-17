@@ -1,6 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 
-import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy, RadixRep)
+import Data.List.RadixSort.Base (msdSort, lsdSort, msdSortBy, lsdSortBy)  -- , RadixRep
 
 import Data.List as L
 import Data.Int
@@ -10,7 +10,7 @@ import Test.QuickCheck as QC
 import System.Random
 import System.Exit (exitSuccess, exitWith, ExitCode(..))
 import Control.Monad as M
-import Text.Printf
+-- import Text.Printf
 
 
 data Rec = Rec {fieldA:: Float} deriving (Eq, Show)

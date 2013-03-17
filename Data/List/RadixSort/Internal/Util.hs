@@ -39,7 +39,6 @@ partListByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' list = do
         partListByDigitR bitsToShift sortInfo digit vec xs
       where
         digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
-{-# INLINABLE partListByDigit #-}
         
 ------------------------------------------
 
@@ -58,7 +57,6 @@ partSeqByDigit indexMap sortInfo' @ SortInfo {..} digit' vec' sq = do
         partSeqByDigitR bitsToShift sortInfo digit vec (S.viewl xs)
       where
         digitVal = getDigitVal sortInfo (indexMap x) digit bitsToShift
-{-# INLINABLE partSeqByDigit #-}
         
 ------------------------------------------
 
@@ -78,6 +76,6 @@ xor :: Bool -> Bool -> Bool
 xor False True = True
 xor True False = True
 xor _ _ = False
-{-# INLINABLE xor #-}
+{-# INLINE xor #-}
 
 

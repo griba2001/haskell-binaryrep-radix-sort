@@ -8,6 +8,7 @@ import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import qualified Data.Sequence as S
 import "dlist" Data.DList (DList)
+import "vector" Data.Vector (Vector)
 import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
 import qualified "vector" Data.Vector.Mutable as VM
@@ -19,7 +20,7 @@ import Data.STRef.Strict (newSTRef, readSTRef, writeSTRef)
 
 ------------------------------------------
 
-lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] -> DList a
+lsdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> Vector Bool -> [a] -> DList a
 lsdRadixSort _indexMap _sortInfo _digitsConstancy [] = D.empty
 lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
 lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
@@ -28,7 +29,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         vecIni <- V.unsafeThaw $ V.replicate (siTopDigitVal+1) S.empty
         -- partition by digit 0
         let digit' = 0
-        if not $ digitsConstancy!!digit'
+        if not $ digitsConstancy V.! digit'
           then partListByDigit indexMap sortInfo digit' vecIni list
           else do -- constant data on digit 0, write list to digitVal pos.
                  let bitsToShift = 0
@@ -39,7 +40,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
 
         M.when (siTopDigit > 0) $
            M.forM_ [1..siTopDigit] $ \digit -> do
-             M.when ( not $ digitsConstancy!!digit)
+             M.when ( not $ digitsConstancy V.! digit)
                 (do  -- sort by digit
                 vecFrom <- readSTRef refVecFrom
                 vecTo <- V.thaw $ V.replicate (siTopDigitVal+1) S.empty

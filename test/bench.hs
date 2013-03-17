@@ -68,9 +68,13 @@ main = do
 
 benchmark1 :: (Ord a, RadixRep a) => [a] -> IO (NominalDiffTime, NominalDiffTime, NominalDiffTime)
 benchmark1 list = do
-        (t1, _s1) <- timed $ msdSort list
-        (t2, _s2) <- timed $ lsdSort list
-        (t3, _s3) <- timed $ L.sort list
+        (t1, s1) <- timed $ msdSort list
+        (t2, s2) <- timed $ lsdSort list
+        (t3, s3) <- timed $ L.sort list
+        let ! _last1 = L.last s1
+            ! _last2 = L.last s2
+            ! _last3 = L.last s3
+        
         return (t1, t2, t3)
 
 benchmark1Show :: NominalDiffTime -> NominalDiffTime -> NominalDiffTime -> NominalDiffTime -> IO ()
@@ -94,15 +98,19 @@ putTimes t tmin = do
 
 benchmark2 :: (Ord a, RadixRep a, VAR.Radix a) => [a] -> IO (NominalDiffTime, NominalDiffTime, NominalDiffTime, NominalDiffTime)
 benchmark2 list = do
-        (t1, _s1) <- timed $ msdSort list
-        (t2, _s2) <- timed $ lsdSort list
-        (t3, _s3) <- timed $ L.sort list
+        (t1, s1) <- timed $ msdSort list
+        (t2, s2) <- timed $ lsdSort list
+        (t3, s3) <- timed $ L.sort list
+        let ! _last1 = L.last s1
+            ! _last2 = L.last s2
+            ! _last3 = L.last s3
         
         let ! v1 = V.fromList list
-        (t4, _s4) <- timedIO $ do
+        (t4, s4) <- timedIO $ do
                 vec <- V.unsafeThaw v1
                 VAR.sort vec
                 V.unsafeFreeze vec
+        let ! _last4 = V.last s4
         return (t1, t2, t3, t4)
 
 benchmark2Show :: NominalDiffTime -> NominalDiffTime -> IO ()

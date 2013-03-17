@@ -9,6 +9,7 @@ import qualified Data.List as L
 import Data.Sequence (Seq)
 import qualified Data.Sequence as S
 import "dlist" Data.DList (DList)
+import "vector" Data.Vector (Vector)
 import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
 
@@ -22,7 +23,7 @@ import Debug.Trace (trace)
 
 ------------------------------------------
 
-sortByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> Int -> (Seq a) -> DList a
+sortByDigit :: (RadixRep b) => (a -> b) -> SortInfo -> Vector Bool -> Int -> (Seq a) -> DList a
 sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
     case S.viewl sq of
       S.EmptyL -> D.empty
@@ -66,7 +67,7 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
     
 
 ------------------------------------------
-nextSortableDigit :: [Bool] -> Int -> Int
+nextSortableDigit :: Vector Bool -> Int -> Int
 nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
   where
           
@@ -77,12 +78,23 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
     digitsToSkip' = digitsToSkip 
 #endif
 
-    digitsToSkip = L.length $ L.takeWhile (== True) msdDigitsConstancy    
-    msdDigitsConstancy = L.take digit digitsConstancy .$ L.reverse
-{-# INLINABLE nextSortableDigit #-}
+    -- digitsToSkip = V.length $ V.takeWhile (== True) msdDigitsConstancy
+    -- msdDigitsConstancy = V.take digit digitsConstancy .$ V.reverse
+
+    digitsToSkip = nextSortableDigitR (==True) (digit-1) 0
+            
+    nextSortableDigitR prop indx cnt =
+      case indx of
+         0 -> if prop $ digitsConstancy V.! 0
+                then cnt +1
+                else cnt
+         _ -> if prop $ digitsConstancy V.! indx
+                then nextSortableDigitR prop (indx -1) (cnt +1)
+                else cnt
+                
 ------------------------------------------
        
-msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> [Bool] -> [a] ->  DList a
+msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> Vector Bool -> [a] ->  DList a
 msdRadixSort _indexMap _sortInfo _digitsConstancy [] = D.empty
 msdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
 msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =

@@ -23,9 +23,11 @@ import Data.Bits
 
 floatToWord :: Float -> Word32
 floatToWord x = runST (cast x)
+{-# INLINE floatToWord #-}
 
 doubleToWord :: Double -> Word64
 doubleToWord x = runST (cast x)
+{-# INLINE doubleToWord #-}
 
 {-# INLINE cast #-}
 cast :: (MArray (STUArray s) a (ST s),

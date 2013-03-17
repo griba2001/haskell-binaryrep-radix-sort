@@ -16,7 +16,7 @@ import Control.Monad as M
 
 ------------------------------------------
 
-countAndPartBySign :: (RadixRep b) => (a -> b) -> SortInfo -> [a] -> ST s ([a], [Bool], [a], [Bool])
+countAndPartBySign :: (RadixRep b) => (a -> b) -> SortInfo -> [a] -> ST s ([a], Vector Bool, [a], Vector Bool)
 countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
 
     vecPos <- V.replicateM (siTopDigit+1) $ VM.replicate (siTopDigitVal+1) (0::Int)
@@ -34,7 +34,7 @@ countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
             vecCounters <- V.unsafeFreeze mvecCounters
             return $ V.any (== lenNeg) vecCounters
 
-    return (poss, digitsConstPos, negs, digitsConstNeg)
+    return (poss, V.fromList digitsConstPos, negs, V.fromList digitsConstNeg)
             
 -----------------------------
 
