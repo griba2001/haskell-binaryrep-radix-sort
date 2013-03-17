@@ -3,7 +3,7 @@
 module Data.List.RadixSort.Internal.MSD (msdRadixSort) where
 
 import Data.List.RadixSort.Internal.Types
-import Data.List.RadixSort.Internal.Util
+import Data.List.RadixSort.Internal.Util (partSeqByDigit, collectVecToDList, xor)
 
 import qualified Data.List as L
 import Data.Sequence (Seq)
@@ -102,5 +102,4 @@ msdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
                     else D.fromList list
   where
     nextDigit = nextSortableDigit digitsConstancy (siTopDigit+1)      
-{-# INLINABLE msdRadixSort #-}          
         

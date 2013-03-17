@@ -3,7 +3,7 @@
 module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
 import Data.List.RadixSort.Internal.Types
-import Data.List.RadixSort.Internal.Util
+import Data.List.RadixSort.Internal.Util (forLoop_, partListByDigit, partSeqByDigit, collectVecToDList)
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import qualified Data.Sequence as S
@@ -38,13 +38,13 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         
         refVecFrom <- newSTRef vecIni
 
-        M.when (siTopDigit > 0) $ lsdRadixSortForLoop 1 (<= siTopDigit) (+1) refVecFrom
+        M.when (siTopDigit > 0) $
+            forLoop_ 1 (<= siTopDigit) (+1) $ \digit -> digitPass digit refVecFrom
 
         readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
 
   where
-    lsdRadixSortForLoop indx prop incr refVecFrom = do
-             let digit = indx
+    digitPass digit refVecFrom = do
              M.when ( not $ digitsConstancy V.! digit) $ do -- sort by digit
                 vecFrom <- readSTRef refVecFrom
                 vecTo <- VM.replicate (siTopDigitVal+1) S.empty
@@ -57,18 +57,5 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
                     partSeqByDigit indexMap sortInfo digit vecTo s
 
                 writeSTRef refVecFrom vecTo
-                
-             let next = incr indx    
-             M.when (prop next) $ lsdRadixSortForLoop next prop incr refVecFrom
-{-
-    readAndPartitionForLoop indx prop incr vecFrom digit vecTo = do
-                    let digitVal = indx
-                    -- read vecFrom queue
-                    s <- VM.unsafeRead vecFrom digitVal
-                    -- partition to vecTo queues
-                    partSeqByDigit indexMap sortInfo digit vecTo s
-                    
-                    let next = incr indx
-                    M.when (prop next) $ readAndPartitionForLoop next prop incr vecFrom digit vecTo
-                    -}
+             
 ------------------------------------------

@@ -84,8 +84,8 @@ xor _ _ = False
 forLoop_ :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m ()) -> m ()
 forLoop_ indx prop incr f = do
         f indx
-        let next = incr indx
         M.when (prop next) $ forLoop_ next prop incr f
-        
+  where      
+    next = incr indx    
         
         
