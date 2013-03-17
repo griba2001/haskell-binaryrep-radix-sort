@@ -81,15 +81,15 @@ nextSortableDigit digitsConstancy digit = (digit - 1 - digitsToSkip')
     -- digitsToSkip = V.length $ V.takeWhile (== True) msdDigitsConstancy
     -- msdDigitsConstancy = V.take digit digitsConstancy .$ V.reverse
 
-    digitsToSkip = nextSortableDigitR (==True) (digit-1) 0
+    digitsToSkip = countWhile (==True) (digit-1) 0
             
-    nextSortableDigitR prop indx cnt =
+    countWhile prop indx cnt =
       case indx of
          0 -> if prop $ digitsConstancy V.! 0
                 then cnt +1
                 else cnt
          _ -> if prop $ digitsConstancy V.! indx
-                then nextSortableDigitR prop (indx -1) (cnt +1)
+                then countWhile prop (indx -1) (cnt +1)
                 else cnt
                 
 ------------------------------------------
