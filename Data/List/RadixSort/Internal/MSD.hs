@@ -68,7 +68,7 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
 
 ------------------------------------------
 nextSortableDigit :: Vector Bool -> Int -> Int
-nextSortableDigit digitsConstancy digit = (nextDigit - digitsToSkip')
+nextSortableDigit digitsConstancy digit = nextDigit - digitsToSkip'
   where
           
 #ifdef DEBUG
@@ -78,8 +78,6 @@ nextSortableDigit digitsConstancy digit = (nextDigit - digitsToSkip')
     digitsToSkip' = digitsToSkip 
 #endif
 
-    -- digitsToSkip = V.length $ V.takeWhile (== True) msdDigitsConstancy
-    -- msdDigitsConstancy = V.take digit digitsConstancy .$ V.reverse
     nextDigit = digit -1
 
     digitsToSkip = reverseCountWhile (==True) nextDigit 0
