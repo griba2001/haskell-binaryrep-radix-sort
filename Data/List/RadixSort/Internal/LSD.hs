@@ -43,26 +43,27 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
 
   where
-    lsdRadixSortForLoop digit prop incr refVecFrom = do
-            
+    lsdRadixSortForLoop indx prop incr refVecFrom = do
+             let digit = indx
              M.when ( not $ digitsConstancy V.! digit) $ do -- sort by digit
                 vecFrom <- readSTRef refVecFrom
                 vecTo <- VM.replicate (siTopDigitVal+1) S.empty
                 
-                readAndPartitionLoop digit vecFrom siTopDigitVal vecTo
+                readAndPartitionForLoop 0 (<= siTopDigitVal) (+1) vecFrom digit vecTo
 
                 writeSTRef refVecFrom vecTo
                 
-             let next = incr digit    
+             let next = incr indx    
              M.when (prop next) $ lsdRadixSortForLoop next prop incr refVecFrom
 
-    readAndPartitionLoop digit vecFrom loopIdx vecTo = do
-                    let digitVal = siTopDigitVal - loopIdx
+    readAndPartitionForLoop indx prop incr vecFrom digit vecTo = do
+                    let digitVal = indx
                     -- read vecFrom queue
                     s <- VM.unsafeRead vecFrom digitVal
                     -- partition to vecTo queues
                     partSeqByDigit indexMap sortInfo digit vecTo s
                     
-                    M.when (loopIdx > 0) $ readAndPartitionLoop digit vecFrom (loopIdx-1) vecTo
+                    let next = incr indx
+                    M.when (prop next) $ readAndPartitionForLoop next prop incr vecFrom digit vecTo
 
 ------------------------------------------
