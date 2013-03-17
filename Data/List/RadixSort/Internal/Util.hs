@@ -2,7 +2,7 @@
 module Data.List.RadixSort.Internal.Util (
   partListByDigit, partSeqByDigit,
   collectVecToDList,
-  xor,          
+  xor, forLoop_         
 ) where
 
 import Data.List.RadixSort.Internal.Types
@@ -21,6 +21,7 @@ import "vector" Data.Vector.Mutable (MVector)
 import qualified "vector" Data.Vector.Mutable as VM
 
 import GHC.ST (ST)
+import Control.Monad as M
                        
 ------------------------------------------
 
@@ -78,4 +79,13 @@ xor True False = True
 xor _ _ = False
 {-# INLINE xor #-}
 
+------------------------------------------
 
+forLoop_ :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m ()) -> m ()
+forLoop_ indx prop incr f = do
+        f indx
+        let next = incr indx
+        M.when (prop next) $ forLoop_ next prop incr f
+        
+        
+        
