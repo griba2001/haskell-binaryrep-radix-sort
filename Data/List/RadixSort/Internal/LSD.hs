@@ -26,7 +26,7 @@ lsdRadixSort _indexMap _sortInfo _digitsConstancy [x] = D.singleton x
 lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         assert (sizeOf (indexMap x) `mod` siDigitSize == 0) $ runST $ do
         
-        vecIni <- V.unsafeThaw $ V.replicate (siTopDigitVal+1) S.empty
+        vecIni <- VM.replicate (siTopDigitVal+1) S.empty
         -- partition by digit 0
         let digit' = 0
         if not $ digitsConstancy V.! digit'
@@ -38,22 +38,23 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         
         refVecFrom <- newSTRef vecIni
 
-        M.when (siTopDigit > 0) $ lsdRadixSortForLoop 1 (+1) (< siTopDigit) refVecFrom
+        M.when (siTopDigit > 0) $ lsdRadixSortForLoop 1 (<= siTopDigit) (+1) refVecFrom
 
         readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
 
   where
-    lsdRadixSortForLoop digit incr prop refVecFrom = do
+    lsdRadixSortForLoop digit prop incr refVecFrom = do
             
              M.when ( not $ digitsConstancy V.! digit) $ do -- sort by digit
                 vecFrom <- readSTRef refVecFrom
-                vecTo <- V.thaw $ V.replicate (siTopDigitVal+1) S.empty
+                vecTo <- VM.replicate (siTopDigitVal+1) S.empty
                 
                 readAndPartitionLoop digit vecFrom siTopDigitVal vecTo
 
                 writeSTRef refVecFrom vecTo
                 
-             M.when (prop digit) $ lsdRadixSortForLoop (incr digit) incr prop refVecFrom
+             let next = incr digit    
+             M.when (prop next) $ lsdRadixSortForLoop next prop incr refVecFrom
 
     readAndPartitionLoop digit vecFrom loopIdx vecTo = do
                     let digitVal = siTopDigitVal - loopIdx

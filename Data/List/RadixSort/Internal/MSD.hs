@@ -12,6 +12,7 @@ import "dlist" Data.DList (DList)
 import "vector" Data.Vector (Vector)
 import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
+import qualified "vector" Data.Vector.Mutable as VM
 
 import GHC.ST (runST)
 import Control.Exception (assert)
@@ -31,7 +32,7 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
         if S.null xs
            then D.singleton x
            else runST $ do
-                mvec <- V.unsafeThaw emptyVecOfSeqs
+                mvec <- VM.replicate (siTopDigitVal+1) S.empty
                 -- partition by digit
                 partSeqByDigit indexMap sortInfo digit mvec sq
                 vec <- V.unsafeFreeze mvec
@@ -46,8 +47,6 @@ sortByDigit indexMap sortInfo @ SortInfo {..} digitsConstancy digit sq =
 
                         return $ D.concat dlists
   where
-    ! emptyVecOfSeqs = V.replicate (siTopDigitVal+1) S.empty
-    
     recSort nextDigit sq' =
             case S.viewl sq' of
               S.EmptyL -> D.empty
