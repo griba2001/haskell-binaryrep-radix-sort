@@ -2,7 +2,9 @@
 module Data.List.RadixSort.Internal.Util (
   partListByDigit, partSeqByDigit,
   collectVecToDList,
-          xor, forLoopM,  forLoopM_
+  xor,
+  forLoopM, forLoopM_,
+  forLoopUpM_, forLoopDownM_
 ) where
 
 import Data.List.RadixSort.Internal.Types
@@ -102,4 +104,11 @@ forLoopM indx prop incr f = forLoopMR indx
     f' indx' = do
             res <- f indx'
             return (res, incr indx')
+
+------------------------------------------
+forLoopUpM_ :: (Monad m, Enum a) => a -> (a -> Bool) -> (a -> m ()) -> m ()
+forLoopUpM_ indx prop f = forLoopM_ indx prop succ f
+
+forLoopDownM_ :: (Monad m, Enum a) => a -> (a -> Bool) -> (a -> m ()) -> m ()
+forLoopDownM_ indx prop f = forLoopM_ indx prop pred f
 
