@@ -81,7 +81,7 @@ xor _ _ = False
 
 ------------------------------------------
 
-forLoopM_ :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m ()) -> m ()
+forLoopM_ :: (Monad m) => a -> (a -> Bool) -> (a -> a) -> (a -> m ()) -> m ()
 forLoopM_ indx prop incr f = do
         f indx
         M.when (prop next) $ forLoopM_ next prop incr f
@@ -89,7 +89,7 @@ forLoopM_ indx prop incr f = do
     next = incr indx    
         
 ------------------------------------------
-forLoopM :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m a) -> m [a]
+forLoopM :: (Monad m) => a -> (a -> Bool) -> (a -> a) -> (a -> m b) -> m [b]
 forLoopM indx prop incr f = forLoopMR indx
   where
     forLoopMR indx' = do
