@@ -39,13 +39,13 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         refVecFrom <- newSTRef vecIni
 
         M.when (siTopDigit > 0) $
-            forLoop_ 1 (<= siTopDigit) (+1) $ \digit -> digitPass digit refVecFrom
+            forLoop_ 1 (<= siTopDigit) (+1) $ \digit -> do
+                M.when ( not $ digitsConstancy V.! digit) $ digitPass digit refVecFrom
 
         readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
 
   where
-    digitPass digit refVecFrom = do
-             M.when ( not $ digitsConstancy V.! digit) $ do -- sort by digit
+    digitPass digit refVecFrom = do -- sort by digit
                 vecFrom <- readSTRef refVecFrom
                 vecTo <- VM.replicate (siTopDigitVal+1) S.empty
                 
