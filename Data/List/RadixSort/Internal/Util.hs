@@ -2,7 +2,7 @@
 module Data.List.RadixSort.Internal.Util (
   partListByDigit, partSeqByDigit,
   collectVecToDList,
-  xor, forLoop_         
+          xor, forLoopM,  forLoopM_
 ) where
 
 import Data.List.RadixSort.Internal.Types
@@ -81,11 +81,25 @@ xor _ _ = False
 
 ------------------------------------------
 
-forLoop_ :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m ()) -> m ()
-forLoop_ indx prop incr f = do
+forLoopM_ :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m ()) -> m ()
+forLoopM_ indx prop incr f = do
         f indx
-        M.when (prop next) $ forLoop_ next prop incr f
+        M.when (prop next) $ forLoopM_ next prop incr f
   where      
     next = incr indx    
         
+------------------------------------------
+forLoopM :: Monad m => Int -> (Int -> Bool) -> (Int -> Int) -> (Int -> m a) -> m [a]
+forLoopM indx prop incr f = forLoopMR indx
+  where
+    forLoopMR indx' = do
+        (y, next) <- f' indx'
+        ys <- if prop next
+                 then forLoopMR next
+                 else return []
+        return (y:ys)
         
+    f' indx' = do
+            res <- f indx'
+            return (res, incr indx')
+

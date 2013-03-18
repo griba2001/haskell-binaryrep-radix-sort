@@ -3,7 +3,7 @@
 module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
 import Data.List.RadixSort.Internal.Types
-import Data.List.RadixSort.Internal.Util (forLoop_, partListByDigit, partSeqByDigit, collectVecToDList)
+import Data.List.RadixSort.Internal.Util (forLoopM_, partListByDigit, partSeqByDigit, collectVecToDList)
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import qualified Data.Sequence as S
@@ -32,7 +32,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
         refVecFrom <- newSTRef vecIni
 
         M.when (siTopDigit > 0) $
-            forLoop_ 1 (<= siTopDigit) (+1) $ \digit -> do
+            forLoopM_ 1 (<= siTopDigit) (+1) $ \digit -> do
                 M.when ( not $ digitsConstancy V.! digit) $ digitPass digit refVecFrom
 
         readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
@@ -54,7 +54,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
                 vecTo <- VM.replicate (siTopDigitVal+1) S.empty
                 
                 -- readAndPartitionForLoop 0 (<= siTopDigitVal) (+1) vecFrom digit vecTo
-                forLoop_ 0 (<= siTopDigitVal) (+1) $ \digitVal -> do
+                forLoopM_ 0 (<= siTopDigitVal) (+1) $ \digitVal -> do
                     -- read vecFrom queue
                     s <- VM.unsafeRead vecFrom digitVal
                     -- partition to vecTo queues
