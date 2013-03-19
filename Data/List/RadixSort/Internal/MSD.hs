@@ -82,14 +82,14 @@ nextSortableDigit digitsConstancy digit = nextDigit - digitsToSkip'
     digitsToSkip = reverseCountWhile (==True) nextDigit 0
             
     reverseCountWhile prop indx cnt =
-      case indx of
-         0 -> if prop $ digitsConstancy V.! 0
-                then cnt +1
-                else cnt
-         _ -> if prop $ digitsConstancy V.! indx
-                then reverseCountWhile prop (indx -1) (cnt +1)
-                else cnt
-                
+            
+      let propHolds = prop $ digitsConstancy V.! indx
+          newCnt = if propHolds then cnt +1 else cnt
+      in
+         if propHolds && indx > 0
+           then reverseCountWhile prop (indx -1) newCnt
+           else newCnt
+           
 ------------------------------------------
        
 msdRadixSort :: (RadixRep b) => (a -> b) -> SortInfo -> Vector Bool -> [a] ->  DList a

@@ -3,7 +3,7 @@ module Data.List.RadixSort.Internal.Util (
   partListByDigit, partSeqByDigit,
   collectVecToDList,
   xor,
-  forLoopM, forLoopM_,
+  forLoopM_,
   forLoopUpM_, forLoopDownM_
 ) where
 
@@ -90,21 +90,6 @@ forLoopM_ indx prop incr f = do
   where      
     next = incr indx    
         
-------------------------------------------
-forLoopM :: (Monad m) => a -> (a -> Bool) -> (a -> a) -> (a -> m b) -> m [b]
-forLoopM indx prop incr f = forLoopMR indx
-  where
-    forLoopMR indx' = do
-        (y, next) <- f' indx'
-        ys <- if prop next
-                 then forLoopMR next
-                 else return []
-        return (y:ys)
-        
-    f' indx' = do
-            res <- f indx'
-            return (res, incr indx')
-
 ------------------------------------------
 forLoopUpM_ :: (Monad m, Enum a) => a -> (a -> Bool) -> (a -> m ()) -> m ()
 forLoopUpM_ indx prop f = forLoopM_ indx prop succ f
