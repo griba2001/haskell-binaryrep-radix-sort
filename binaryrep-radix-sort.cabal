@@ -10,7 +10,7 @@ name:                binaryrep-radix-sort
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             1.6.0.21
+version:             1.6.0.22
 
 -- A short (one-line) description of the package.
 synopsis:            RadixSort of floats, ints and unsigned, based on their binary representation
@@ -46,6 +46,10 @@ Flag Debug
   Description: Enable debug support
   Default:     False
 
+Flag Counters
+  Description: Enable digit pass optimization with counters
+  Default:     True
+
 Flag Llvm
   Description: Enable llvm compilation
   Default:     False
@@ -74,6 +78,13 @@ library
       CC-Options: "-DDEBUG"
     else
       CC-Options: "-DNDEBUG"
+
+  if flag(counters)
+    cpp-Options: -DCOUNTERS
+    if !os(windows)
+      CC-Options: "-DCOUNTERS"
+    else
+      CC-Options: "-DNCOUNTERS"
 
   Build-depends:       base >= 4.3
                      , array >= 0.4

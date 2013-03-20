@@ -23,7 +23,8 @@ countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
     vecNeg <- V.replicateM (siTopDigit+1) $ VM.replicate (siTopDigitVal+1) (0::Int)
     
     (lenPos, poss, lenNeg, negs) <- updateCounters indexMap sortInfo vecPos 0 [] vecNeg 0 [] list
-    
+
+#ifdef COUNTERS    
     digitsConstPos <- M.forM [0..siTopDigit] $ \digit -> do
             let mvecCounters = vecPos V.! digit
             vecCounters <- V.unsafeFreeze mvecCounters
@@ -33,8 +34,16 @@ countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
             let mvecCounters = vecNeg V.! digit
             vecCounters <- V.unsafeFreeze mvecCounters
             return $ V.any (== lenNeg) vecCounters
+            
+    let vectDigitsConstPos = V.fromList digitsConstPos
+        vectDigitsConstNeg = V.fromList digitsConstNeg
+            
+#else
+    let vectDigitsConstPos = V.replicate (siTopDigit+1) False
+        vectDigitsConstNeg = V.replicate (siTopDigit+1) False
+#endif
 
-    return (poss, V.fromList digitsConstPos, negs, V.fromList digitsConstNeg)
+    return (poss, vectDigitsConstPos, negs, vectDigitsConstNeg)
             
 -----------------------------
 
@@ -44,7 +53,9 @@ updateCounters :: (RadixRep b) => (a -> b) -> SortInfo ->
                                                    [a] -> ST s (Int, [a], Int, [a])
 updateCounters _indexMap _sortInfo _vecPos cntPos accumPos _vecNeg cntNeg accumNeg []  = return (cntPos, accumPos, cntNeg, accumNeg)
 updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg cntNeg accumNeg (x:xs) = do
-            
+
+#ifdef COUNTERS
+
         M.forM_ [0..siTopDigit] $ \digit -> do
             let mvecCounters = if isNegIndexVal
                                    then vecNeg V.! digit
@@ -53,6 +64,7 @@ updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg c
             let digitVal = allDigitVals!!digit
             dvCnt <- VM.unsafeRead mvecCounters digitVal
             VM.unsafeWrite mvecCounters digitVal (dvCnt +1)
+#endif
 
         if isNegIndexVal
            then updateCounters indexMap sortInfo vecPos cntPos accumPos vecNeg (cntNeg+1) (x:accumNeg) xs

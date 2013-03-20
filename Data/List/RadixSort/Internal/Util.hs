@@ -76,9 +76,8 @@ collectVecToDList n dl vec =
 ------------------------------------------
 
 xor :: Bool -> Bool -> Bool
-xor False True = True
-xor True False = True
-xor _ _ = False
+xor False y = y
+xor True y = not y
 {-# INLINE xor #-}
 
 ------------------------------------------
