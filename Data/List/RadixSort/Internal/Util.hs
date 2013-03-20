@@ -88,6 +88,7 @@ forLoopM_ indx prop incr f = do
         M.when (prop next) $ forLoopM_ next prop incr f
   where      
     next = incr indx    
+{-# INLINABLE forLoopM_ #-}
         
 ------------------------------------------
 forLoopUpM_ :: (Monad m, Enum a) => a -> (a -> Bool) -> (a -> m ()) -> m ()
