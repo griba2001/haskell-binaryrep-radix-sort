@@ -28,7 +28,7 @@ getSortInfo sortType x = SortInfo {
   where
     bitsPerDigit = case sortType of
                         ST_LSD -> 8
-                        ST_MSD -> 4
+                        ST_MSD -> 8
 {-# INLINABLE getSortInfo #-}
 ------------------------------------------
 

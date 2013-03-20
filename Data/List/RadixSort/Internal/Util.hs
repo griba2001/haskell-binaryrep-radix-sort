@@ -92,7 +92,10 @@ forLoopM_ indx prop incr f = do
 ------------------------------------------
 forLoopUpM_ :: (Monad m, Enum a) => a -> (a -> Bool) -> (a -> m ()) -> m ()
 forLoopUpM_ indx prop f = forLoopM_ indx prop succ f
+{-# INLINE forLoopUpM_ #-}
 
 forLoopDownM_ :: (Monad m, Enum a) => a -> (a -> Bool) -> (a -> m ()) -> m ()
 forLoopDownM_ indx prop f = forLoopM_ indx prop pred f
+{-# INLINE forLoopDownM_ #-}
+
 

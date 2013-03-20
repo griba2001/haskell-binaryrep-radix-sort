@@ -13,7 +13,7 @@
 
   Here we partition numbers by sign and sort both lists in parallel (you should link with -threaded)
 
-  The digit size is set to 8 bits for LSD and set to 4 for MSD as this values minimize the benchmark times.
+  The digit size is set to 8 bits.
 
   Digit value queues ('Seq' a) are appended as difference lists ('DList' from package dlist, O(1) on append)
 

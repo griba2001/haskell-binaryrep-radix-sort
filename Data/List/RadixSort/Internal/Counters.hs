@@ -4,6 +4,7 @@ module Data.List.RadixSort.Internal.Counters (
 ) where
 
 import Data.List.RadixSort.Internal.Types
+import Data.List.RadixSort.Internal.Util (forLoopUpM_)
 import Data.List.RadixSort.Internal.RadixRep (getAllDigitVals, isNeg)
 
 import "vector" Data.Vector (Vector)
@@ -56,7 +57,7 @@ updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg c
 
 #ifdef COUNTERS
 
-        M.forM_ [0..siTopDigit] $ \digit -> do
+        forLoopUpM_ 0 (<= siTopDigit) $ \digit -> do
             let mvecCounters = if isNegIndexVal
                                    then vecNeg V.! digit
                                    else vecPos V.! digit
