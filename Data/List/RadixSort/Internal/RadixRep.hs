@@ -34,7 +34,7 @@ getSortInfo sortType x = SortInfo {
                         ST_LSD -> 8
                         ST_MSD -> 8
     size = sizeOf x                    
-    topDigit = (sizeOf x) `div` bitsPerDigit - 1
+    topDigit = (size `div` bitsPerDigit) - 1
     isRRSigned = repType x /= RT_WordN
     digitsWithBitsToShift = L.zip bitsToShiftList digitList
     maskList = L.map (uncurry (getDigitMask bitsPerDigit isRRSigned topDigit)) digitsWithBitsToShift
