@@ -33,7 +33,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
 
         M.when (siTopDigit > 0) $
             forLoopUpM_ (1::Int) (<= siTopDigit) $ \digit -> do
-                M.when ( not $ digitsConstancy V.! digit) $ digitPass digit refVecFrom
+                M.when ( not $ digitsConstancy `V.unsafeIndex` digit) $ digitPass digit refVecFrom
 
         readSTRef refVecFrom >>= V.unsafeFreeze >>= (return . collectVecToDList siTopDigitVal D.empty)
 
@@ -41,7 +41,7 @@ lsdRadixSort indexMap sortInfo @ SortInfo {..} digitsConstancy list@(x:_) =
     -- partition by digit 0      
     digitPassIni vecIni = do  
         let digit = 0
-        if not $ digitsConstancy V.! digit
+        if not $ digitsConstancy `V.unsafeIndex` digit
           then partListByDigit indexMap sortInfo digit vecIni list
           else do -- constant data on digit 0, write list to digitVal pos.
                  let bitsToShift = 0

@@ -27,12 +27,12 @@ countAndPartBySign indexMap sortInfo @ SortInfo {..} list = do
 
 #ifdef COUNTERS    
     digitsConstPos <- M.forM [0..siTopDigit] $ \digit -> do
-            let mvecCounters = vecPos V.! digit
+            let mvecCounters = vecPos `V.unsafeIndex` digit
             vecCounters <- V.unsafeFreeze mvecCounters
             return $ V.any (== lenPos) vecCounters
 
     digitsConstNeg <- M.forM [0..siTopDigit] $ \digit -> do
-            let mvecCounters = vecNeg V.! digit
+            let mvecCounters = vecNeg `V.unsafeIndex` digit
             vecCounters <- V.unsafeFreeze mvecCounters
             return $ V.any (== lenNeg) vecCounters
             
@@ -59,8 +59,8 @@ updateCounters indexMap sortInfo @ SortInfo {..} vecPos cntPos accumPos vecNeg c
 
         forLoopUpM_ 0 (<= siTopDigit) $ \digit -> do
             let mvecCounters = if isNegIndexVal
-                                   then vecNeg V.! digit
-                                   else vecPos V.! digit
+                                   then vecNeg `V.unsafeIndex` digit
+                                   else vecPos `V.unsafeIndex` digit
                                    
             let digitVal = allDigitVals!!digit
             dvCnt <- VM.unsafeRead mvecCounters digitVal

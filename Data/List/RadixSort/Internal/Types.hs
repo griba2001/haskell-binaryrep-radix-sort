@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes, FlexibleContexts #-}
+{-# LANGUAGE RankNTypes, PackageImports, FlexibleContexts #-}
 module Data.List.RadixSort.Internal.Types (
   RadixRep(..), SortInfo(..), RepType(..), SortType(..),
   (.$)
@@ -11,6 +11,8 @@ import GHC.ST (runST, ST)
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Word (Word8, Word16, Word32, Word64)
 import Data.Bits
+import "vector" Data.Vector (Vector)
+-- import qualified "vector" Data.Vector as V
 
 -- import Control.Exception (assert)
 
@@ -41,7 +43,8 @@ data SortInfo = SortInfo {siDigitSize:: {-# UNPACK #-} !Int,
                           siTopDigitVal:: {-# UNPACK #-} !Int,
                           siIsSigned:: !Bool,
                           siSize:: {-# UNPACK #-} !Int,
-                          siIsOrderReverse:: !Bool}
+                          siIsOrderReverse:: !Bool,
+                          siMasks :: !(Vector Word64)}
 
 data RepType = RT_Float | RT_IntN | RT_WordN deriving Eq
 

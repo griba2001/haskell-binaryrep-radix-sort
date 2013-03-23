@@ -124,17 +124,17 @@ Benchmark bench-binaryrep-radix-sort: RUNNING...
 
 Comparison of times sorting a 10000 size list of Floats
 
-1. msdSort avg time: 0.2409522s; ratio vs min. avg time: x19.955955674081s
-2. lsdSort avg time: 0.2550496s; ratio vs min. avg time: x21.123519570654s
-3. Data.List.sort avg time: 0.0120742s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.266303s; ratio vs min. avg time: x22.029267243518s
+2. lsdSort avg time: 0.2528468s; ratio vs min. avg time: x20.91613586354s
+3. Data.List.sort avg time: 0.0120886s; ratio vs min. avg time: x1s
 
 
 Comparison of times sorting a 10000 size list of Int32
 
-1. msdSort avg time: 0.2007118s; ratio vs min. avg time: x28.086507514483s
-2. lsdSort avg time: 0.1658306s; ratio vs min. avg time: x23.205423861632s
-3. Data.List.sort avg time: 0.0103566s; ratio vs min. avg time: x1.449245752987s
-4. Data.Vector.Algorithms.Radix.sort avg time: 0.0071462s; ratio vs min. avg time: x1s
+1. msdSort avg time: 0.2112408s; ratio vs min. avg time: x32.107368677042s
+2. lsdSort avg time: 0.1644384s; ratio vs min. avg time: x24.993677042801s
+3. Data.List.sort avg time: 0.0102318s; ratio vs min. avg time: x1.555173881322s
+4. Data.Vector.Algorithms.Radix.sort avg time: 0.0065792s; ratio vs min. avg time: x1s
 
 -------------------
 Benchmark bench-binaryrep-radix-sort: FINISH

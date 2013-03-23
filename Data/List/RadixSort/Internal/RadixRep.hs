@@ -13,23 +13,44 @@ import Control.Exception (assert)
 
 import qualified Data.List as L
 import Data.Word (Word8, Word16, Word32, Word64)
+-- import "vector" Data.Vector (Vector)
+import qualified "vector" Data.Vector as V
 import Text.Printf (printf)
 ------------------------------------------
 
 getSortInfo :: (RadixRep a) => SortType -> a -> SortInfo
 getSortInfo sortType x = SortInfo {
                          siDigitSize = bitsPerDigit,
-                         siTopDigit = (sizeOf x) `div` bitsPerDigit - 1,
+                         siTopDigit = topDigit,
                          siTopDigitVal = bit bitsPerDigit -1,
-                         siSize = sizeOf x,
+                         siSize = size,
                          siIsOrderReverse = False,
-                         siIsSigned = repType x /= RT_WordN
+                         siIsSigned = isRRSigned,
+                         siMasks = V.fromList maskList 
                          }
   where
     bitsPerDigit = case sortType of
                         ST_LSD -> 8
                         ST_MSD -> 8
-{-# INLINABLE getSortInfo #-}
+    size = sizeOf x                    
+    topDigit = (sizeOf x) `div` bitsPerDigit - 1
+    isRRSigned = repType x /= RT_WordN
+    maskList = L.zip bitsToShiftList digitList
+            .$ L.map (uncurry (getDigitMask bitsPerDigit isRRSigned topDigit))
+                   
+    digitList = [0..topDigit]
+    bitsToShiftList = [0,bitsPerDigit..(size-bitsPerDigit)]
+
+
+getDigitMask :: Int -> Bool -> Int -> Int -> Int -> Word64
+getDigitMask bitsPerDigit isRRSigned topDigit bitsToShift digit =
+        if digit == topDigit && isRRSigned
+              then shiftL digitMaskSignExcl bitsToShift
+              else shiftL digitMask bitsToShift
+  where
+      digitMask = bit bitsPerDigit -1
+      digitMaskSignExcl = (bit (bitsPerDigit-1) -1)    -- sign excluded
+
 ------------------------------------------
 
 isNeg ::  (RadixRep a) => a -> Bool
@@ -50,10 +71,10 @@ getDigitVal :: (RadixRep a) => SortInfo -> a -> Int -> Int -> Int
 getDigitVal sortInfo x digit bitsToShift =
 
         case sizeOf x of
-                        64 -> wordGetDigitVal sortInfo (toWordRep x :: Word64) (digit, bitsToShift)
-                        32 -> wordGetDigitVal sortInfo (toWordRep x :: Word32) (digit, bitsToShift)
-                        16 -> wordGetDigitVal sortInfo (toWordRep x :: Word16) (digit, bitsToShift)
-                        8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) (digit, bitsToShift)
+                        64 -> wordGetDigitVal sortInfo (toWordRep x :: Word64) bitsToShift digit
+                        32 -> wordGetDigitVal sortInfo (toWordRep x :: Word32) bitsToShift digit
+                        16 -> wordGetDigitVal sortInfo (toWordRep x :: Word16) bitsToShift digit
+                        8 -> wordGetDigitVal sortInfo (toWordRep x :: Word8) bitsToShift digit
                         other -> error $ printf "size %d not supported!" other
 {-# INLINABLE getDigitVal #-}
 
@@ -74,24 +95,21 @@ getAllDigitVals sortInfo x =
 
 wordGetAllDigitVal :: (Bits a, Integral a) => SortInfo -> a -> [Int]
 wordGetAllDigitVal sortInfo @ SortInfo {..} x =
-        L.zip digitList bitsToShiftList
-            .$ L.map (wordGetDigitVal sortInfo x)
+        L.zip bitsToShiftList digitList
+            .$ L.map (uncurry (wordGetDigitVal sortInfo x))
   where
     digitList = [0..siTopDigit]
     bitsToShiftList = [0,siDigitSize..(siSize-siDigitSize)]
 {-# INLINABLE wordGetAllDigitVal #-}
 
 ------------------------------------------
-
-wordGetDigitVal :: (Bits a, Integral a) => SortInfo -> a -> (Int, Int) ->  Int
-wordGetDigitVal SortInfo {..} bits (digit, bitsToShift) =
-      assert (digit >= 0 && digit <= siTopDigit) $
-        fromIntegral (shiftR (bits .&. mask) bitsToShift)
+wordGetDigitVal :: (Bits a, Integral a) => SortInfo -> a -> Int -> Int ->  Int
+wordGetDigitVal SortInfo {..} bits bitsToShift digit =
+      assert (digit >= 0 && digit <= siTopDigit) 
+        (fromIntegral (shiftR (bits .&. mask) bitsToShift)
+        )
     where
-      mask = if digit == siTopDigit && siIsSigned
-              then shiftL digitMaskSignExcl bitsToShift
-              else shiftL digitMask bitsToShift
-
-      digitMask = bit siDigitSize -1
-      digitMaskSignExcl = (bit (siDigitSize-1) -1)    -- sign excluded
+      mask = fromIntegral (siMasks `V.unsafeIndex` digit)
 {-# INLINABLE wordGetDigitVal #-}
+
+
