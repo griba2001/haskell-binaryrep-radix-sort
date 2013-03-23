@@ -26,6 +26,7 @@ getSortInfo sortType x = SortInfo {
                          siSize = size,
                          siIsOrderReverse = False,
                          siIsSigned = isRRSigned,
+                         siDigitsWithBitsToShift = digitsWithBitsToShift,        
                          siMasks = V.fromList maskList 
                          }
   where
@@ -35,8 +36,8 @@ getSortInfo sortType x = SortInfo {
     size = sizeOf x                    
     topDigit = (sizeOf x) `div` bitsPerDigit - 1
     isRRSigned = repType x /= RT_WordN
-    maskList = L.zip bitsToShiftList digitList
-            .$ L.map (uncurry (getDigitMask bitsPerDigit isRRSigned topDigit))
+    digitsWithBitsToShift = L.zip bitsToShiftList digitList
+    maskList = L.map (uncurry (getDigitMask bitsPerDigit isRRSigned topDigit)) digitsWithBitsToShift
                    
     digitList = [0..topDigit]
     bitsToShiftList = [0,bitsPerDigit..(size-bitsPerDigit)]
@@ -95,12 +96,8 @@ getAllDigitVals sortInfo x =
 
 wordGetAllDigitVal :: (Bits a, Integral a) => SortInfo -> a -> [Int]
 wordGetAllDigitVal sortInfo @ SortInfo {..} x =
-        L.zip bitsToShiftList digitList
-            .$ L.map (uncurry (wordGetDigitVal sortInfo x))
-  where
-    digitList = [0..siTopDigit]
-    bitsToShiftList = [0,siDigitSize..(siSize-siDigitSize)]
-{-# INLINABLE wordGetAllDigitVal #-}
+    L.map (uncurry (wordGetDigitVal sortInfo x)) siDigitsWithBitsToShift
+{-# INLINE wordGetAllDigitVal #-}
 
 ------------------------------------------
 wordGetDigitVal :: (Bits a, Integral a) => SortInfo -> a -> Int -> Int ->  Int

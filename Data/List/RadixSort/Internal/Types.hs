@@ -44,7 +44,9 @@ data SortInfo = SortInfo {siDigitSize:: {-# UNPACK #-} !Int,
                           siIsSigned:: !Bool,
                           siSize:: {-# UNPACK #-} !Int,
                           siIsOrderReverse:: !Bool,
-                          siMasks :: !(Vector Word64)}
+                          siMasks :: !(Vector Word64),
+                          siDigitsWithBitsToShift :: ![(Int, Int)]
+                          }
 
 data RepType = RT_Float | RT_IntN | RT_WordN deriving Eq
 
