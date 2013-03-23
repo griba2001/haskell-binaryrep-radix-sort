@@ -37,20 +37,20 @@ getSortInfo sortType x = SortInfo {
     topDigit = (size `div` bitsPerDigit) - 1
     isRRSigned = repType x /= RT_WordN
     digitsWithBitsToShift = L.zip bitsToShiftList digitList
-    maskList = L.map (uncurry (getDigitMask bitsPerDigit isRRSigned topDigit)) digitsWithBitsToShift
+    maskList = L.map (uncurry getDigitMask) digitsWithBitsToShift
                    
     digitList = [0..topDigit]
     bitsToShiftList = [0,bitsPerDigit..(size-bitsPerDigit)]
 
 
-getDigitMask :: Int -> Bool -> Int -> Int -> Int -> Word64
-getDigitMask bitsPerDigit isRRSigned topDigit bitsToShift digit =
+    getDigitMask :: Int -> Int -> Word64
+    getDigitMask bitsToShift digit =
         if digit == topDigit && isRRSigned
               then shiftL digitMaskSignExcl bitsToShift
               else shiftL digitMask bitsToShift
-  where
-      digitMask = bit bitsPerDigit -1
-      digitMaskSignExcl = (bit (bitsPerDigit-1) -1)    -- sign excluded
+      where
+        digitMask = bit bitsPerDigit -1
+        digitMaskSignExcl = (bit (bitsPerDigit-1) -1)    -- sign excluded
 
 ------------------------------------------
 
