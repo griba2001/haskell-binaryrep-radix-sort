@@ -6,7 +6,7 @@ module Data.List.RadixSort.Internal.Types (
 
 import Data.Array.ST (newArray, readArray, MArray, STUArray)
 import Data.Array.Unsafe (castSTUArray)
-import GHC.ST (runST, ST)
+import Control.Monad.ST (runST, ST)
 
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Word (Word8, Word16, Word32, Word64)

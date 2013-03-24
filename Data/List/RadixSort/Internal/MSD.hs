@@ -3,7 +3,8 @@
 module Data.List.RadixSort.Internal.MSD (msdRadixSort) where
 
 import Data.List.RadixSort.Internal.Types
-import Data.List.RadixSort.Internal.Util (partSeqByDigit, collectVecToDList, xor)
+import Data.List.RadixSort.Internal.Common (partSeqByDigit, collectVecToDList)
+import Data.List.RadixSort.Internal.Util (xor)
 
 import qualified Data.List as L
 import Data.Sequence (Seq)
@@ -14,7 +15,7 @@ import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
 import qualified "vector" Data.Vector.Mutable as VM
 
-import GHC.ST (runST)
+import Control.Monad.ST (runST)
 import Control.Exception (assert)
 import "parallel" Control.Parallel.Strategies
 

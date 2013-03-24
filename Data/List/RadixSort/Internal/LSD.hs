@@ -3,7 +3,8 @@
 module Data.List.RadixSort.Internal.LSD (lsdRadixSort) where
 
 import Data.List.RadixSort.Internal.Types
-import Data.List.RadixSort.Internal.Util (forLoopUpM_, partListByDigit, partSeqByDigit, collectVecToDList)
+import Data.List.RadixSort.Internal.Common (partListByDigit, partSeqByDigit, collectVecToDList)
+import Data.List.RadixSort.Internal.Util (forLoopUpM_)
 import Data.List.RadixSort.Internal.RadixRep (getDigitVal)
 
 import qualified Data.Sequence as S
@@ -13,7 +14,7 @@ import qualified "dlist" Data.DList as D
 import qualified "vector" Data.Vector as V
 import qualified "vector" Data.Vector.Mutable as VM
 
-import GHC.ST (runST)
+import Control.Monad.ST (runST)
 import Control.Exception (assert)
 import qualified Control.Monad as M
 import Data.STRef.Strict (newSTRef, readSTRef, writeSTRef)

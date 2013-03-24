@@ -12,7 +12,7 @@ import qualified "vector" Data.Vector as V
 import "vector" Data.Vector.Mutable (MVector)
 import qualified "vector" Data.Vector.Mutable as VM
 
-import GHC.ST (ST)
+import Control.Monad.ST (ST)
 import Control.Monad as M
 
 ------------------------------------------
