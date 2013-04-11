@@ -82,7 +82,7 @@ lsdSortBy indexMap list@(x:_) = case repType rep of
                            RT_IntN -> lsdSortInts sortInfo indexMap list
                            RT_WordN -> lsdSortNats sortInfo indexMap list
   where
-    sortInfo = getSortInfo ST_MSD rep
+    sortInfo = getSortInfo ST_LSD rep
     rep = indexMap x
 
 ----------------------------------                           
