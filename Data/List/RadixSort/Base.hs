@@ -59,11 +59,13 @@ msdSort = msdSortBy id
 msdSortBy :: (RadixRep b) => (a -> b) -> [a] -> [a]
 msdSortBy _indexMap [] = []
 msdSortBy _indexMap [x] = [x]
-msdSortBy indexMap list@(x:_) = case repType $ indexMap x of
-                           RT_Float -> msdSortFloats indexMap list
-                           RT_IntN -> msdSortInts indexMap list
-                           RT_WordN -> msdSortNats indexMap list
-
+msdSortBy indexMap list@(x:_) = case repType rep of
+                           RT_Float -> msdSortFloats sortInfo indexMap list
+                           RT_IntN -> msdSortInts sortInfo indexMap list
+                           RT_WordN -> msdSortNats sortInfo indexMap list
+  where
+    sortInfo = getSortInfo ST_MSD rep
+    rep = indexMap x
 
 -- | A first pass to build digit counters is used to split lists by sign, then they are sorted in parallel
 --
@@ -75,20 +77,20 @@ lsdSort = lsdSortBy id
 lsdSortBy :: (RadixRep b) => (a -> b) -> [a] -> [a]
 lsdSortBy _indexMap [] = []
 lsdSortBy _indexMap [x] = [x]
-lsdSortBy indexMap list@(x:_) = case repType $ indexMap x of
-                           RT_Float -> lsdSortFloats indexMap list
-                           RT_IntN -> lsdSortInts indexMap list
-                           RT_WordN -> lsdSortNats indexMap list
+lsdSortBy indexMap list@(x:_) = case repType rep of
+                           RT_Float -> lsdSortFloats sortInfo indexMap list
+                           RT_IntN -> lsdSortInts sortInfo indexMap list
+                           RT_WordN -> lsdSortNats sortInfo indexMap list
+  where
+    sortInfo = getSortInfo ST_MSD rep
+    rep = indexMap x
 
 ----------------------------------                           
                            
-msdSortFloats :: (RadixRep b) => (a -> b) -> [a] -> [a]
-msdSortFloats _indexMap [] = []
-msdSortFloats _indexMap [x] = [x]
-msdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) `prependReversing` (sortedPoss `using` rseq)
+msdSortFloats :: (RadixRep b) => SortInfo -> (a -> b) -> [a] -> [a]
+msdSortFloats sortInfo indexMap list = (sortedNegs `using` rpar) `prependReversing` (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo ST_MSD $ indexMap x
     sortedPoss = D.toList $ msdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = D.toList $ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg negs
 
@@ -97,53 +99,38 @@ prependReversing negs poss  = L.foldl' (flip (:)) poss negs
 {-# INLINABLE prependReversing #-}
 
 
-lsdSortFloats :: (RadixRep b) => (a -> b) -> [a] -> [a]
-lsdSortFloats _indexMap [] = []
-lsdSortFloats _indexMap [x] = [x]
-lsdSortFloats indexMap list@(x:_) = (sortedNegs `using` rpar) `prependReversing` (sortedPoss `using` rseq)
+lsdSortFloats :: (RadixRep b) => SortInfo -> (a -> b) -> [a] -> [a]
+lsdSortFloats sortInfo indexMap list = (sortedNegs `using` rpar) `prependReversing` (sortedPoss `using` rseq)
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo ST_MSD $ indexMap x
     sortedPoss = D.toList $ lsdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = D.toList $ msdRadixSort indexMap sortInfo {siIsOrderReverse = True} digitsConstNeg negs
 
 ----------------------------------
                       
-msdSortInts :: (RadixRep b) => (a -> b) -> [a] -> [a]
-msdSortInts _indexMap [] = []
-msdSortInts _indexMap [x] = [x]
-msdSortInts indexMap list@(x:_) = D.toList $ D.concat [(sortedNegs `using` rpar), (sortedPoss `using` rseq)]
+msdSortInts :: (RadixRep b) => SortInfo -> (a -> b) -> [a] -> [a]
+msdSortInts sortInfo indexMap list = D.toList $ D.concat [(sortedNegs `using` rpar), (sortedPoss `using` rseq)]
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo ST_MSD $ indexMap x
     sortedPoss = msdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = msdRadixSort indexMap sortInfo digitsConstNeg negs
 
-lsdSortInts :: (RadixRep b) => (a -> b) -> [a] -> [a]
-lsdSortInts _indexMap [] = []
-lsdSortInts _indexMap [x] = [x]
-lsdSortInts indexMap list@(x:_) = D.toList $ D.concat [(sortedNegs `using` rpar), (sortedPoss `using` rseq)]
+lsdSortInts :: (RadixRep b) => SortInfo -> (a -> b) -> [a] -> [a]
+lsdSortInts sortInfo indexMap list = D.toList $ D.concat [(sortedNegs `using` rpar), (sortedPoss `using` rseq)]
   where
     (poss, digitsConstPos, negs, digitsConstNeg) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo ST_LSD $ indexMap x
     sortedPoss = lsdRadixSort indexMap sortInfo digitsConstPos poss
     sortedNegs = lsdRadixSort indexMap sortInfo digitsConstNeg negs
     
 ----------------------------------
 
-msdSortNats :: (RadixRep b) => (a -> b) -> [a] -> [a]
-msdSortNats _indexMap [] = []
-msdSortNats _indexMap [x] = [x]
-msdSortNats indexMap list@(x:_) = D.toList $ msdRadixSort indexMap sortInfo digitsConstPos poss
+msdSortNats :: (RadixRep b) => SortInfo -> (a -> b) -> [a] -> [a]
+msdSortNats sortInfo indexMap list = D.toList $ msdRadixSort indexMap sortInfo digitsConstPos poss
   where
     (poss, digitsConstPos, _, _) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo ST_MSD $ indexMap x
           
 
-lsdSortNats :: (RadixRep b) => (a -> b) -> [a] -> [a]
-lsdSortNats _indexMap [] = []
-lsdSortNats _indexMap [x] = [x]
-lsdSortNats indexMap list@(x:_) = D.toList $ lsdRadixSort indexMap sortInfo digitsConstPos poss
+lsdSortNats :: (RadixRep b) => SortInfo -> (a -> b) -> [a] -> [a]
+lsdSortNats sortInfo indexMap list = D.toList $ lsdRadixSort indexMap sortInfo digitsConstPos poss
   where
     (poss, digitsConstPos, _, _) = runST $ countAndPartBySign indexMap sortInfo list
-    sortInfo = getSortInfo ST_LSD $ indexMap x
