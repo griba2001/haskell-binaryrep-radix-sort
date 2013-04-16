@@ -82,7 +82,7 @@ nextSortableDigit digitsConstancy digit = nextDigit - digitsToSkip'
 
     digitsToSkip = reverseCountWhile (==True) nextDigit 0
             
-    reverseCountWhile prop indx cnt =
+    reverseCountWhile prop !indx !cnt =
             
       let propHolds = prop $ digitsConstancy V.! indx
           newCnt = if propHolds then cnt +1 else cnt
